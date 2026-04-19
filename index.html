@@ -1,0 +1,2909 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MultiBiz — تدبير الأعمال المغربي</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== THEME ===== */
+:root{
+  --primary:#00875A; --primary-light:#E3FCEF; --primary-dark:#006644;
+  --accent:#0065FF; --accent-light:#DEEBFF;
+  --danger:#DE350B; --danger-light:#FFEBE6;
+  --warning:#FF8B00; --warning-light:#FFFAE6;
+  --surface:#fff; --bg:#F4F5F7; --bg2:#EBECF0;
+  --border:#DFE1E6; --text:#172B4D; --text2:#6B778C; --text3:#97A0AF;
+  --r:8px; --rl:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08);
+  --shadow-lg:0 4px 16px rgba(0,0,0,.12);
+}
+[data-theme="dark"]{
+  --primary:#36B37E; --primary-light:rgba(54,179,126,.15); --primary-dark:#57D9A3;
+  --accent:#4C9AFF; --accent-light:rgba(76,154,255,.15);
+  --danger:#FF7452; --danger-light:rgba(255,116,82,.15);
+  --warning:#FFAB00; --warning-light:rgba(255,171,0,.15);
+  --surface:#1D2125; --bg:#161A1D; --bg2:#22272B;
+  --border:#2C333A; --text:#E6EDF3; --text2:#9FADBC; --text3:#738496;
+  --shadow:0 1px 3px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);
+  font-size:14px;line-height:1.5;direction:rtl;-webkit-font-smoothing:antialiased;
+  transition:background .2s,color .2s
+}
+.hidden{display:none!important}
+
+/* ===== SPLASH ===== */
+#splash{position:fixed;inset:0;background:linear-gradient(135deg,#00875A,#172B4D);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999}
+#splash .ico{font-size:72px;animation:pulse 1.5s infinite}
+#splash .txt{color:white;font-size:32px;font-weight:800;margin-top:12px;letter-spacing:2px}
+#splash .sub{color:rgba(255,255,255,.6);font-size:13px;margin-top:6px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* ===== ONBOARDING ===== */
+#onboarding{min-height:100vh;background:linear-gradient(135deg,#172B4D,#00875A);display:flex;align-items:center;justify-content:center;padding:16px}
+.onb-box{width:100%;max-width:640px}
+.onb-head{text-align:center;margin-bottom:32px}
+.onb-head h1{color:white;font-size:32px;font-weight:800}
+.onb-head p{color:rgba(255,255,255,.7);font-size:14px;margin-top:8px}
+.biz-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.biz-card{background:white;border-radius:var(--rl);padding:22px 16px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.biz-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.15);border-color:rgba(0,135,90,.3)}
+.biz-card.selected{border-color:#00875A;background:#E3FCEF}
+.biz-card .ico{font-size:44px;margin-bottom:10px}
+.biz-card .name{font-size:15px;font-weight:700;color:#172B4D}
+.biz-card .desc{font-size:11px;color:#6B778C;margin-top:4px;line-height:1.4}
+
+/* ===== LOGIN ===== */
+#login-page{min-height:100vh;background:linear-gradient(135deg,#172B4D,#00875A);display:flex;align-items:center;justify-content:center;padding:16px}
+.login-box{width:100%;max-width:420px}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo .ico{font-size:56px;display:block;margin-bottom:8px}
+.login-logo h1{color:white;font-size:30px;font-weight:800;letter-spacing:1px}
+.login-logo p{color:rgba(255,255,255,.65);font-size:13px;margin-top:6px}
+.card{background:var(--surface);border-radius:var(--rl);border:1px solid var(--border);padding:22px;box-shadow:var(--shadow)}
+.tab-switch{display:flex;background:var(--bg);border-radius:8px;padding:3px;margin-bottom:20px}
+.tab-switch button{flex:1;padding:9px;border:none;cursor:pointer;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;background:transparent;color:var(--text2);transition:all .2s}
+.tab-switch button.active{background:var(--surface);color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+
+/* ===== LAYOUT ===== */
+#app{display:flex;min-height:100vh}
+.sidebar{width:240px;background:#172B4D;color:white;display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:100;transition:transform .3s}
+[data-theme="dark"] .sidebar{background:#0D1117;border-left:1px solid var(--border)}
+.sidebar-logo{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.sidebar-logo .ico{font-size:30px}
+.sidebar-logo .name{font-size:18px;font-weight:800}
+.sidebar-logo .sub{font-size:10px;opacity:.5}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 20px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;font-weight:500;transition:all .2s;border-right:3px solid transparent;text-decoration:none;background:none;border-top:none;border-left:none;border-bottom:none;width:100%;text-align:right;font-family:inherit}
+.nav-item:hover{color:white;background:rgba(255,255,255,.05)}
+.nav-item.active{color:white;background:rgba(0,135,90,.2);border-right-color:var(--primary)}
+.nav-item .ico{font-size:18px;width:24px;text-align:center}
+.sidebar-footer{padding:14px;border-top:1px solid rgba(255,255,255,.08)}
+.clinic-badge{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:var(--r);padding:10px}
+.c-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;color:white}
+.c-name{font-size:12px;font-weight:700;color:white;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c-plan{font-size:10px;color:var(--primary);font-weight:600}
+
+.main{flex:1;margin-right:240px;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:16px;font-weight:700}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.icon-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:8px;border-radius:var(--r);color:var(--text2);transition:all .15s}
+.icon-btn:hover{background:var(--bg);color:var(--text)}
+.page{display:none;padding:24px}
+.page.active{display:block}
+
+/* ===== STATS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:var(--rl);border:1px solid var(--border);padding:20px;display:flex;align-items:flex-start;gap:14px}
+.stat-icon{width:44px;height:44px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.si-green{background:var(--primary-light)}
+.si-blue{background:var(--accent-light)}
+.si-orange{background:var(--warning-light)}
+.si-red{background:var(--danger-light)}
+.stat-val{font-size:28px;font-weight:800;line-height:1;color:var(--text)}
+.stat-lbl{font-size:12px;color:var(--text2);margin-top:4px}
+.stat-chg{font-size:11px;color:var(--primary);font-weight:600;margin-top:4px}
+
+/* ===== FORMS ===== */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.form-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);transition:border-color .15s;direction:rtl}
+.form-input:focus{outline:none;border-color:var(--primary)}
+.form-input[dir=ltr]{direction:ltr;text-align:left}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--r);border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;text-decoration:none}
+.btn-primary{background:var(--primary);color:white}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-secondary{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--bg2)}
+.btn-danger{background:var(--danger);color:white}
+.btn-green{background:#25D366;color:white}
+.btn-green:hover{background:#1da851}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-icon{padding:7px;width:32px;justify-content:center}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ===== TABLE ===== */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:right;padding:12px 14px;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);background:var(--bg)}
+td{padding:13px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text)}
+tr:hover td{background:var(--bg)}
+tr:last-child td{border-bottom:none}
+
+/* ===== BADGES ===== */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-green{background:var(--primary-light);color:var(--primary-dark)}
+.badge-blue{background:var(--accent-light);color:var(--accent)}
+.badge-orange{background:var(--warning-light);color:var(--warning)}
+.badge-red{background:var(--danger-light);color:var(--danger)}
+.badge-gray{background:var(--bg2);color:var(--text2)}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .15s}
+.modal{background:var(--surface);border-radius:var(--rl);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .2s}
+.modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-title{font-size:16px;font-weight:800}
+.modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--text2);padding:4px 8px;border-radius:var(--r)}
+.modal-close:hover{background:var(--bg)}
+.modal-body{padding:20px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:24px;padding:12px 20px;border-radius:var(--r);font-size:13px;font-weight:700;z-index:9999;animation:slideUp .3s;box-shadow:var(--shadow-lg);color:white}
+.toast-success{background:var(--primary)}
+.toast-error{background:var(--danger)}
+.toast-info{background:var(--accent)}
+
+/* ===== MISC ===== */
+.divider{height:1px;background:var(--border);margin:16px 0}
+.text-muted{color:var(--text2);font-size:12px}
+.text-mono{font-family:'IBM Plex Mono',monospace;font-size:12px;direction:ltr;display:inline-block}
+.mb-16{margin-bottom:16px}
+.empty-state{text-align:center;padding:48px 16px;color:var(--text2)}
+.empty-ico{font-size:52px;margin-bottom:12px;opacity:.5}
+
+/* ===== FILE UPLOAD ===== */
+.file-drop{border:2px dashed var(--border);border-radius:var(--rl);padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
+.file-drop:hover{border-color:var(--primary);background:var(--primary-light)}
+.file-drop input{display:none}
+
+/* ===== HERO ===== */
+.hero-card{background:linear-gradient(135deg,#172B4D,#00875A);color:white;border-radius:var(--rl);padding:22px;margin-bottom:20px}
+.hero-card h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.hero-card p{opacity:.8;font-size:13px}
+
+/* ===== BUSINESS SELECTOR IN TOPBAR ===== */
+.biz-selector{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text);transition:all .15s;font-family:inherit}
+.biz-selector:hover{background:var(--bg2)}
+.biz-selector .ico{font-size:16px}
+
+/* ===== PUBLIC BOOKING PAGE ===== */
+#public-booking{min-height:100vh;background:linear-gradient(135deg,#f0f4f8 0%,#e3fcef 100%);padding:20px 16px;display:flex;justify-content:center}
+[data-theme="dark"] #public-booking{background:linear-gradient(135deg,#0D1117 0%,#161A1D 100%)}
+.pb-box{width:100%;max-width:520px}
+.pb-header{text-align:center;margin-bottom:24px;padding:24px 16px;background:linear-gradient(135deg,#00875A,#172B4D);border-radius:var(--rl);color:white}
+.pb-header .ico{font-size:48px;margin-bottom:8px}
+.pb-header h1{font-size:24px;font-weight:800}
+.pb-header p{opacity:.85;font-size:13px;margin-top:6px}
+.pb-step{background:var(--surface);border-radius:var(--rl);border:1px solid var(--border);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.pb-step-title{font-size:13px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.pb-step-num{width:24px;height:24px;border-radius:50%;background:var(--primary);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.pb-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pb-opt{padding:14px;border:2px solid var(--border);border-radius:var(--r);background:var(--surface);cursor:pointer;transition:all .15s;text-align:right;font-family:inherit;font-size:13px}
+.pb-opt:hover:not(:disabled){border-color:var(--primary);background:var(--primary-light)}
+.pb-opt.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark);font-weight:700}
+.pb-opt:disabled{opacity:.35;cursor:not-allowed;background:var(--bg2)}
+.pb-opt .big{font-size:16px;font-weight:800;display:block;margin-bottom:2px}
+.pb-opt .small{font-size:11px;color:var(--text2)}
+.pb-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.pb-day{padding:10px 4px;border:2px solid var(--border);border-radius:var(--r);background:var(--surface);cursor:pointer;transition:all .15s;text-align:center;font-family:inherit}
+.pb-day:hover:not(:disabled){border-color:var(--primary)}
+.pb-day.selected{border-color:var(--primary);background:var(--primary);color:white}
+.pb-day:disabled{opacity:.3;cursor:not-allowed}
+.pb-day .dname{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase}
+.pb-day.selected .dname{color:rgba(255,255,255,.8)}
+.pb-day .dnum{font-size:18px;font-weight:800;color:var(--text);margin-top:2px}
+.pb-day.selected .dnum{color:white}
+.pb-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.pb-slot{padding:10px 6px;border:2px solid var(--border);border-radius:var(--r);background:var(--surface);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;color:var(--text);transition:all .15s;text-align:center}
+.pb-slot:hover:not(:disabled){border-color:var(--primary)}
+.pb-slot.selected{border-color:var(--primary);background:var(--primary);color:white}
+.pb-slot:disabled{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+.pb-period-label{font-size:11px;font-weight:700;color:var(--text2);margin:10px 0 6px;text-align:right}
+.pb-summary{background:var(--primary-light);border-radius:var(--r);padding:14px;font-size:13px;color:var(--primary-dark);line-height:1.8}
+.pb-success{text-align:center;padding:30px 16px}
+.pb-success .ico{font-size:64px;margin-bottom:12px}
+.pb-success h2{font-size:22px;font-weight:800;margin-bottom:8px;color:var(--primary)}
+.pb-success p{color:var(--text2);font-size:13px;margin-bottom:16px}
+
+/* ===== BOOKING LINK CARD (admin side) ===== */
+.bl-card{background:linear-gradient(135deg,#00875A,#006644);color:white;border-radius:var(--rl);padding:22px;margin-bottom:16px}
+.bl-card h3{font-size:18px;font-weight:800;margin-bottom:6px}
+.bl-card p{opacity:.85;font-size:13px;margin-bottom:14px}
+.bl-url{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:var(--r);padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:12px;direction:ltr;word-break:break-all;margin-bottom:12px}
+.bl-actions{display:flex;gap:8px;flex-wrap:wrap}
+.bl-btn{background:white;color:var(--primary-dark);border:none;padding:9px 14px;border-radius:var(--r);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.bl-btn:hover{background:#f4f5f7}
+.bl-btn.wa{background:#25D366;color:white}
+.bl-btn.wa:hover{background:#1da851}
+
+.hours-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.hours-row label{font-size:11px;font-weight:600;color:var(--text2);min-width:70px}
+.hours-row input{flex:1}
+.day-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1.5px solid var(--border);border-radius:20px;background:var(--surface);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;color:var(--text2);margin:3px;transition:all .15s}
+.day-chip.active{background:var(--primary);color:white;border-color:var(--primary)}
+.mobile-menu{display:none;background:none;border:none;cursor:pointer;font-size:24px;color:var(--text);padding:8px}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+.sidebar-overlay.open{display:block}
+@media(max-width:900px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .sidebar{transform:translateX(100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-right:0}
+  .mobile-menu{display:inline-flex}
+  .form-grid-2,.form-grid-3{grid-template-columns:1fr}
+  .biz-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:520px){
+  .stats-grid{grid-template-columns:1fr}
+  .biz-grid{grid-template-columns:1fr}
+  .page{padding:16px}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<!-- ===== SPLASH ===== -->
+<div id="splash">
+  <div class="ico">💼</div>
+  <div class="txt">MultiBiz</div>
+  <div class="sub">تدبير الأعمال 🇲🇦</div>
+</div>
+
+<!-- ===== ONBOARDING: CHOOSE BUSINESS TYPE ===== -->
+<div id="onboarding" class="hidden">
+  <div class="onb-box">
+    <div class="onb-head">
+      <h1>💼 مرحبا بك ف MultiBiz</h1>
+      <p>اختار نوع النشاط ديالك باش نكيّف التطبيق ليك</p>
+    </div>
+    <div class="biz-grid">
+      <div class="biz-card" onclick="selectBusiness('salon')">
+        <div class="ico">💇</div>
+        <div class="name">صالون حلاقة</div>
+        <div class="desc">مواعيد، زبناء، تذكيرات WhatsApp</div>
+      </div>
+      <div class="biz-card" onclick="selectBusiness('insurance')">
+        <div class="ico">🛡️</div>
+        <div class="name">تأمين</div>
+        <div class="desc">زبناء، وثائق، تجديد العقود</div>
+      </div>
+      <div class="biz-card" onclick="selectBusiness('delivery')">
+        <div class="ico">📦</div>
+        <div class="name">توصيل / طلبات</div>
+        <div class="desc">طلبات، تتبع، إشعار الزبناء</div>
+      </div>
+    </div>
+    <p style="text-align:center;color:rgba(255,255,255,.5);font-size:11px;margin-top:20px">يمكنك تبدل النشاط من بعد ف الإعدادات</p>
+  </div>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div id="login-page" class="hidden">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="ico" id="login-ico">💼</span>
+      <h1>MultiBiz</h1>
+      <p id="login-sub">تدبير الأعمال 🇲🇦</p>
+    </div>
+    <div class="card" style="padding:28px">
+      <div class="tab-switch">
+        <button id="tab-login" class="active" onclick="switchAuthTab('login')">دخول</button>
+        <button id="tab-register" onclick="switchAuthTab('register')">تسجيل جديد</button>
+      </div>
+      <div id="login-error" style="display:none;background:var(--danger-light);color:var(--danger);padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:16px"></div>
+      <div id="register-name-group" style="display:none" class="form-group">
+        <label class="form-label">اسم المحل/الشركة</label>
+        <input type="text" id="reg-name" class="form-input" placeholder="مثال: صالون الأناقة">
+      </div>
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input type="email" id="auth-email" class="form-input" dir="ltr" placeholder="contact@exemple.ma">
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <input type="password" id="auth-pass" class="form-input" dir="ltr" placeholder="••••••••">
+      </div>
+      <div id="register-phone-group" style="display:none" class="form-group">
+        <label class="form-label">رقم الهاتف</label>
+        <input type="tel" id="reg-phone" class="form-input" dir="ltr" placeholder="+212661234567">
+      </div>
+      <button class="btn btn-primary" id="auth-btn" onclick="doAuth()" style="width:100%;justify-content:center;padding:12px">دخول ←</button>
+      <div style="text-align:center;margin-top:12px">
+        <button onclick="goBackToOnboarding()" style="background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit">← تبديل النشاط</button>
+      </div>
+    </div>
+    <p style="text-align:center;color:rgba(255,255,255,.4);font-size:11px;margin-top:16px">MultiBiz © 2026 — Made in Morocco 🇲🇦</p>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" class="hidden">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="ico" id="sb-ico">💼</span>
+      <div>
+        <div class="name">MultiBiz</div>
+        <div class="sub" id="sb-sub">تدبير الأعمال</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="clinic-badge">
+        <div class="c-avatar" id="clinic-avatar">M</div>
+        <div style="flex:1;min-width:0">
+          <div class="c-name" id="clinic-name">المحل</div>
+          <div class="c-plan">مجاني</div>
+        </div>
+        <button onclick="doLogout()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.4);font-size:16px" title="خروج">🚪</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="mobile-menu" onclick="openSidebar()">☰</button>
+        <span class="topbar-title" id="page-title">📊 لوحة التحكم</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="biz-selector" onclick="openBusinessSwitcher()" id="biz-selector">
+          <span class="ico" id="biz-sel-ico">💇</span>
+          <span id="biz-sel-name">صالون</span>
+          <span style="font-size:10px;opacity:.5">▼</span>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" id="theme-btn" title="تبديل المظهر">🌙</button>
+      </div>
+    </div>
+    <div id="pages-container"></div>
+  </main>
+</div>
+
+<!-- ===== PUBLIC BOOKING PAGE ===== -->
+<div id="public-booking" class="hidden"></div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast hidden" id="toast"></div>
+
+<!-- ===== MODAL CONTAINER ===== -->
+<div id="modal-container"></div>
+
+<script>
+/* ============================================================
+   MultiBiz — تطبيق تدبير الأعمال متعدد المهن
+   يشمل: صالون حلاقة / تأمين / توصيل
+   التخزين: localStorage (محلي)
+   ============================================================ */
+
+// ===== STATE =====
+const STATE = {
+  business: null,          // 'salon' | 'insurance' | 'delivery'
+  user: null,              // { email, name, phone }
+  theme: 'light',
+  currentPage: 'dashboard',
+  currentItemId: null,
+  whatsapp: { instance:'', token:'' }
+};
+
+// ===== STORAGE HELPERS =====
+const STORE = {
+  get(k, def){ try { const v = localStorage.getItem('mb_'+k); return v?JSON.parse(v):(def??null); } catch{ return def??null; } },
+  set(k, v){ localStorage.setItem('mb_'+k, JSON.stringify(v)); },
+  del(k){ localStorage.removeItem('mb_'+k); }
+};
+
+// ===== BUSINESS CONFIGS =====
+// Each business defines: its items (clients/orders), fields, labels, nav pages
+const BIZ_CONFIGS = {
+  salon: {
+    id:'salon', icon:'💇', name:'صالون حلاقة', tagline:'مواعيد وزبناء',
+    itemName:'موعد', itemsName:'المواعيد', clientName:'زبون',
+    nav: [
+      {id:'dashboard', ico:'📊', label:'لوحة التحكم'},
+      {id:'appointments', ico:'📅', label:'المواعيد'},
+      {id:'clients', ico:'👥', label:'الزبناء'},
+      {id:'services', ico:'✂️', label:'الخدمات'},
+      {id:'booking', ico:'🔗', label:'صفحة الحجز'},
+      {id:'settings', ico:'⚙️', label:'الإعدادات'}
+    ],
+    // Working schedule: 0=Sunday, 1=Monday, ..., 6=Saturday
+    // Default: all 7 days open (owner can disable in settings)
+    workingDays: [0,1,2,3,4,5,6],
+    // Two working periods (morning + afternoon with lunch break in between)
+    workingHours: [
+      { start: '09:00', end: '13:00' },
+      { start: '15:00', end: '22:00' }
+    ],
+    slotDuration: 30, // minutes per slot
+    defaultServices: [
+      {name:'حلاقة عادية', price:30, duration:20},
+      {name:'حلاقة + غسيل', price:50, duration:30},
+      {name:'حلاقة ذقن', price:20, duration:15},
+      {name:'صبغ', price:80, duration:60},
+      {name:'خدمة كاملة', price:100, duration:75}
+    ],
+    statuses: {
+      pending: {label:'موعد قادم', badge:'badge-blue'},
+      confirmed: {label:'مؤكد', badge:'badge-green'},
+      completed: {label:'تم', badge:'badge-gray'},
+      cancelled: {label:'ملغي', badge:'badge-red'},
+      no_show: {label:'ماجاش', badge:'badge-orange'}
+    }
+  },
+
+  insurance: {
+    id:'insurance', icon:'🛡️', name:'تأمين', tagline:'وثائق وتجديد',
+    itemName:'عقد', itemsName:'العقود', clientName:'زبون',
+    nav: [
+      {id:'dashboard', ico:'📊', label:'لوحة التحكم'},
+      {id:'contracts', ico:'📄', label:'العقود'},
+      {id:'clients', ico:'👥', label:'الزبناء'},
+      {id:'renewals', ico:'🔔', label:'التجديدات'},
+      {id:'settings', ico:'⚙️', label:'الإعدادات'}
+    ],
+    contractTypes: ['تأمين سيارة','تأمين صحي','تأمين منزل','تأمين حياة','تأمين سفر','تأمين شركة','أخرى'],
+    statuses: {
+      active: {label:'ساري', badge:'badge-green'},
+      expiring: {label:'قارب ينتهي', badge:'badge-orange'},
+      expired: {label:'منتهي', badge:'badge-red'},
+      renewed: {label:'تم التجديد', badge:'badge-blue'},
+      cancelled: {label:'ملغي', badge:'badge-gray'}
+    }
+  },
+
+  delivery: {
+    id:'delivery', icon:'📦', name:'توصيل', tagline:'طلبات وتتبع',
+    itemName:'طلب', itemsName:'الطلبات', clientName:'زبون',
+    nav: [
+      {id:'dashboard', ico:'📊', label:'لوحة التحكم'},
+      {id:'orders', ico:'📦', label:'الطلبات'},
+      {id:'clients', ico:'👥', label:'الزبناء'},
+      {id:'drivers', ico:'🚗', label:'السائقون'},
+      {id:'settings', ico:'⚙️', label:'الإعدادات'}
+    ],
+    statuses: {
+      new: {label:'جديد', badge:'badge-gray'},
+      preparing: {label:'قيد التحضير', badge:'badge-blue'},
+      on_way: {label:'ف الطريق', badge:'badge-orange'},
+      delivered: {label:'تم التوصيل', badge:'badge-green'},
+      cancelled: {label:'ملغي', badge:'badge-red'}
+    }
+  }
+};
+
+// ===== DATA HELPERS (per-business items) =====
+function dataKey(kind){ return 'data_' + STATE.business + '_' + kind; }
+function loadItems(kind){ return STORE.get(dataKey(kind), []); }
+function saveItems(kind, items){ STORE.set(dataKey(kind), items); }
+function addItem(kind, item){
+  const items = loadItems(kind);
+  item.id = 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+  item.createdAt = Date.now();
+  items.unshift(item);
+  saveItems(kind, items);
+  return item;
+}
+function updateItem(kind, id, patch){
+  const items = loadItems(kind);
+  const idx = items.findIndex(x=>x.id===id);
+  if(idx<0) return null;
+  items[idx] = {...items[idx], ...patch, updatedAt:Date.now()};
+  saveItems(kind, items);
+  return items[idx];
+}
+function deleteItem(kind, id){
+  const items = loadItems(kind).filter(x=>x.id!==id);
+  saveItems(kind, items);
+}
+function findItem(kind, id){ return loadItems(kind).find(x=>x.id===id); }
+
+// ===== UTILITIES =====
+function fmtDate(ts){ if(!ts) return '—'; return new Date(ts).toLocaleDateString('fr-MA'); }
+function fmtDateTime(ts){ if(!ts) return '—'; return new Date(ts).toLocaleString('fr-MA',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+function fmtMoney(n){ return (Number(n)||0).toLocaleString('fr-MA') + ' درهم'; }
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showToast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast toast-' + (type||'success');
+  t.classList.remove('hidden');
+  clearTimeout(t._tmr);
+  t._tmr = setTimeout(()=>t.classList.add('hidden'), 3000);
+}
+function confirmAction(msg){ return confirm(msg); }
+
+// ===== THEME =====
+function toggleTheme(){
+  STATE.theme = STATE.theme==='light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', STATE.theme);
+  document.getElementById('theme-btn').textContent = STATE.theme==='dark' ? '☀️' : '🌙';
+  STORE.set('theme', STATE.theme);
+}
+function loadTheme(){
+  const t = STORE.get('theme', 'light');
+  STATE.theme = t;
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = t==='dark' ? '☀️' : '🌙';
+}
+
+// ===== MODAL =====
+function openModal(html){
+  const c = document.getElementById('modal-container');
+  c.innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">${html}</div>`;
+}
+function closeModal(){
+  document.getElementById('modal-container').innerHTML = '';
+}
+
+/* ============================================================
+   ONBOARDING + AUTH
+   ============================================================ */
+let selectedBizForOnboard = null;
+
+function selectBusiness(bizId){
+  selectedBizForOnboard = bizId;
+  document.querySelectorAll('.biz-card').forEach(c=>c.classList.remove('selected'));
+  const clicked = document.querySelector(`.biz-card[onclick*="${bizId}"]`);
+  if(clicked) clicked.classList.add('selected');
+  setTimeout(()=>{
+    STATE.business = bizId;
+    STORE.set('business', bizId);
+    const cfg = BIZ_CONFIGS[bizId];
+    document.getElementById('login-ico').textContent = cfg.icon;
+    document.getElementById('login-sub').textContent = cfg.name + ' — ' + cfg.tagline;
+    document.getElementById('onboarding').classList.add('hidden');
+    document.getElementById('login-page').classList.remove('hidden');
+  }, 300);
+}
+
+function goBackToOnboarding(){
+  document.getElementById('login-page').classList.add('hidden');
+  document.getElementById('onboarding').classList.remove('hidden');
+  document.querySelectorAll('.biz-card').forEach(c=>c.classList.remove('selected'));
+}
+
+let authMode = 'login';
+function switchAuthTab(mode){
+  authMode = mode;
+  document.getElementById('tab-login').classList.toggle('active', mode==='login');
+  document.getElementById('tab-register').classList.toggle('active', mode==='register');
+  document.getElementById('register-name-group').style.display = mode==='register' ? 'block' : 'none';
+  document.getElementById('register-phone-group').style.display = mode==='register' ? 'block' : 'none';
+  document.getElementById('auth-btn').textContent = mode==='login' ? 'دخول ←' : '✓ إنشاء حساب';
+}
+
+function doAuth(){
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  if(!email || !password){
+    errEl.textContent = 'عَمَّر الإيميل وكلمة المرور';
+    errEl.style.display = 'block'; return;
+  }
+  if(password.length < 4){
+    errEl.textContent = 'كلمة المرور خاصها على الأقل 4 أحرف';
+    errEl.style.display = 'block'; return;
+  }
+
+  const users = STORE.get('users', {});
+  if(authMode === 'login'){
+    const u = users[email];
+    if(!u || u.password !== password){
+      errEl.textContent = 'الإيميل ولا كلمة المرور غالطين';
+      errEl.style.display = 'block'; return;
+    }
+    STATE.user = {email, name:u.name, phone:u.phone};
+    STORE.set('session', STATE.user);
+    loadWhatsAppSettings();
+    enterApp();
+  } else {
+    const name = document.getElementById('reg-name').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+    if(!name){
+      errEl.textContent = 'اسم المحل مطلوب';
+      errEl.style.display = 'block'; return;
+    }
+    if(users[email]){
+      errEl.textContent = 'هاد الإيميل مسجل من قبل';
+      errEl.style.display = 'block'; return;
+    }
+    users[email] = {password, name, phone, createdAt:Date.now()};
+    STORE.set('users', users);
+    STATE.user = {email, name, phone};
+    STORE.set('session', STATE.user);
+    loadWhatsAppSettings();
+    enterApp();
+  }
+}
+
+function doLogout(){
+  STATE.user = null;
+  STORE.del('session');
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login-page').classList.remove('hidden');
+}
+
+/* ============================================================
+   ENTER APP + NAVIGATION
+   ============================================================ */
+function enterApp(){
+  document.getElementById('onboarding').classList.add('hidden');
+  document.getElementById('login-page').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+
+  const cfg = BIZ_CONFIGS[STATE.business];
+  document.getElementById('sb-ico').textContent = cfg.icon;
+  document.getElementById('sb-sub').textContent = cfg.name;
+  document.getElementById('biz-sel-ico').textContent = cfg.icon;
+  document.getElementById('biz-sel-name').textContent = cfg.name;
+  document.getElementById('clinic-name').textContent = STATE.user?.name || 'المحل';
+  document.getElementById('clinic-avatar').textContent = (STATE.user?.name || 'M')[0].toUpperCase();
+
+  buildSidebar();
+  // initialize seed data if first time (e.g., services for salon)
+  seedDataIfEmpty();
+  showPage(cfg.nav[0].id);
+}
+
+function buildSidebar(){
+  const cfg = BIZ_CONFIGS[STATE.business];
+  const nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = cfg.nav.map(n =>
+    `<button class="nav-item" id="nav-${n.id}" onclick="showPage('${n.id}')"><span class="ico">${n.ico}</span>${n.label}</button>`
+  ).join('');
+}
+
+function seedDataIfEmpty(){
+  if(STATE.business === 'salon'){
+    if(!loadItems('services').length){
+      // Iterate reversed so after unshift they end up in original order
+      [...BIZ_CONFIGS.salon.defaultServices].reverse().forEach(s => addItem('services', {...s}));
+    }
+  }
+}
+
+function showPage(pageId){
+  STATE.currentPage = pageId;
+  const cfg = BIZ_CONFIGS[STATE.business];
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navBtn = document.getElementById('nav-'+pageId);
+  if(navBtn) navBtn.classList.add('active');
+  const navItem = cfg.nav.find(n=>n.id===pageId);
+  if(navItem) document.getElementById('page-title').textContent = navItem.ico + ' ' + navItem.label;
+  closeSidebar();
+  renderPage(pageId);
+}
+
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+function openBusinessSwitcher(){
+  const html = `
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">🔄 تبديل النشاط</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="margin-bottom:16px">البيانات ديال كل نشاط محفوظة بشكل منفصل</p>
+        <div class="biz-grid">
+          ${Object.values(BIZ_CONFIGS).map(b => `
+            <div class="biz-card ${STATE.business===b.id?'selected':''}" onclick="switchBusiness('${b.id}')">
+              <div class="ico">${b.icon}</div>
+              <div class="name">${b.name}</div>
+              <div class="desc">${b.tagline}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+  openModal(html);
+}
+function switchBusiness(bizId){
+  STATE.business = bizId;
+  STORE.set('business', bizId);
+  closeModal();
+  enterApp();
+  showToast('✓ تم التبديل إلى ' + BIZ_CONFIGS[bizId].name);
+}
+
+/* ============================================================
+   PAGE RENDERER
+   ============================================================ */
+function renderPage(pageId){
+  const container = document.getElementById('pages-container');
+  const biz = STATE.business;
+  let html = '';
+  let afterRender = null;
+
+  if(pageId === 'dashboard'){
+    html = renderDashboard(biz);
+  } else if(pageId === 'settings'){
+    html = renderSettings();
+  } else if(biz === 'salon'){
+    if(pageId === 'appointments'){ html = renderAppointments(); afterRender = renderApptTable; }
+    else if(pageId === 'clients'){ html = renderClientsList('salon'); afterRender = () => renderClientsTable('salon'); }
+    else if(pageId === 'services') html = renderServices();
+    else if(pageId === 'booking') html = renderBookingAdminPage();
+  } else if(biz === 'insurance'){
+    if(pageId === 'contracts'){ html = renderContracts(); afterRender = renderContractsTable; }
+    else if(pageId === 'clients'){ html = renderClientsList('insurance'); afterRender = () => renderClientsTable('insurance'); }
+    else if(pageId === 'renewals') html = renderRenewals();
+  } else if(biz === 'delivery'){
+    if(pageId === 'orders'){ html = renderOrders(); afterRender = renderOrdersTable; }
+    else if(pageId === 'clients'){ html = renderClientsList('delivery'); afterRender = () => renderClientsTable('delivery'); }
+    else if(pageId === 'drivers') html = renderDrivers();
+  }
+
+  container.innerHTML = `<div class="page active">${html}</div>`;
+  if(afterRender) afterRender();
+}
+
+/* ============================================================
+   DASHBOARD (adapts per business)
+   ============================================================ */
+function renderDashboard(biz){
+  const cfg = BIZ_CONFIGS[biz];
+  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  const weekStart = Date.now() - 7*86400000;
+
+  let stats;
+  if(biz === 'salon'){
+    const appts = loadItems('appointments');
+    const clients = loadItems('clients');
+    const today = appts.filter(a => a.datetime && new Date(a.datetime) >= todayStart && new Date(a.datetime) < new Date(todayStart.getTime()+86400000));
+    const completed = appts.filter(a => a.status === 'completed');
+    const revenue = completed.reduce((s,a)=>s+(Number(a.price)||0), 0);
+    stats = [
+      {ico:'📅', cls:'si-green', val:today.length, lbl:'مواعيد اليوم'},
+      {ico:'👥', cls:'si-blue', val:clients.length, lbl:'إجمالي الزبناء'},
+      {ico:'✅', cls:'si-orange', val:completed.length, lbl:'مواعيد مكتملة'},
+      {ico:'💰', cls:'si-red', val:fmtMoney(revenue), lbl:'المدخول الإجمالي'}
+    ];
+  } else if(biz === 'insurance'){
+    const contracts = loadItems('contracts');
+    const clients = loadItems('clients');
+    const now = Date.now();
+    const active = contracts.filter(c => c.endDate && new Date(c.endDate).getTime() > now);
+    const expiring = contracts.filter(c => c.endDate && new Date(c.endDate).getTime() > now && new Date(c.endDate).getTime() < now + 30*86400000);
+    const expired = contracts.filter(c => c.endDate && new Date(c.endDate).getTime() <= now);
+    stats = [
+      {ico:'📄', cls:'si-green', val:contracts.length, lbl:'إجمالي العقود'},
+      {ico:'✅', cls:'si-blue', val:active.length, lbl:'عقود سارية'},
+      {ico:'⏰', cls:'si-orange', val:expiring.length, lbl:'قارب ينتهي (30 يوم)'},
+      {ico:'❌', cls:'si-red', val:expired.length, lbl:'عقود منتهية'}
+    ];
+  } else {
+    const orders = loadItems('orders');
+    const clients = loadItems('clients');
+    const pending = orders.filter(o => ['new','preparing','on_way'].includes(o.status));
+    const delivered = orders.filter(o => o.status === 'delivered');
+    const weekOrders = orders.filter(o => o.createdAt > weekStart);
+    stats = [
+      {ico:'📦', cls:'si-green', val:orders.length, lbl:'إجمالي الطلبات'},
+      {ico:'⏳', cls:'si-blue', val:pending.length, lbl:'قيد التنفيذ'},
+      {ico:'✅', cls:'si-orange', val:delivered.length, lbl:'تم التوصيل'},
+      {ico:'📈', cls:'si-red', val:weekOrders.length, lbl:'هاد الأسبوع'}
+    ];
+  }
+
+  const recentItems = getRecentItems(biz);
+
+  return `
+    <div class="hero-card">
+      <h2>${cfg.icon} مرحبا، ${esc(STATE.user?.name||'')}</h2>
+      <p>${cfg.name} — ${cfg.tagline} • ${new Date().toLocaleDateString('fr-MA',{weekday:'long',day:'numeric',month:'long'})}</p>
+    </div>
+
+    <div class="stats-grid">
+      ${stats.map(s => `
+        <div class="stat-card">
+          <div class="stat-icon ${s.cls}">${s.ico}</div>
+          <div style="flex:1;min-width:0">
+            <div class="stat-val">${s.val}</div>
+            <div class="stat-lbl">${s.lbl}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div class="card mb-16">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:16px">⚡ إجراءات سريعة</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        ${quickActions(biz)}
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase">📋 آخر ${cfg.itemsName}</div>
+        <button class="btn btn-secondary btn-sm" onclick="showPage('${biz==='salon'?'appointments':biz==='insurance'?'contracts':'orders'}')">عرض الكل ←</button>
+      </div>
+      ${recentItems.length ? recentItems : '<div class="empty-state"><div class="empty-ico">📭</div>ما كاين حتى '+cfg.itemName+' لساع<br><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="'+quickAddAction(biz)+'">+ أضف ' + cfg.itemName + ' جديد</button></div>'}
+    </div>`;
+}
+
+function quickActions(biz){
+  if(biz === 'salon') return `
+    <button class="btn btn-primary" onclick="openAppointmentModal()">+ موعد جديد</button>
+    <button class="btn btn-secondary" onclick="openClientModal('salon')">+ زبون</button>
+    <button class="btn btn-secondary" onclick="showPage('services')">✂️ الخدمات</button>
+    <button class="btn btn-secondary" onclick="exportData()">📥 تصدير</button>`;
+  if(biz === 'insurance') return `
+    <button class="btn btn-primary" onclick="openContractModal()">+ عقد جديد</button>
+    <button class="btn btn-secondary" onclick="openClientModal('insurance')">+ زبون</button>
+    <button class="btn btn-secondary" onclick="showPage('renewals')">🔔 التجديدات</button>
+    <button class="btn btn-secondary" onclick="exportData()">📥 تصدير</button>`;
+  return `
+    <button class="btn btn-primary" onclick="openOrderModal()">+ طلب جديد</button>
+    <button class="btn btn-secondary" onclick="openClientModal('delivery')">+ زبون</button>
+    <button class="btn btn-secondary" onclick="openDriverModal()">+ سائق</button>
+    <button class="btn btn-secondary" onclick="exportData()">📥 تصدير</button>`;
+}
+function quickAddAction(biz){
+  return biz==='salon' ? 'openAppointmentModal()' : biz==='insurance' ? 'openContractModal()' : 'openOrderModal()';
+}
+
+function getRecentItems(biz){
+  const kind = biz==='salon' ? 'appointments' : biz==='insurance' ? 'contracts' : 'orders';
+  const items = loadItems(kind).slice(0, 5);
+  if(!items.length) return '';
+  const cfg = BIZ_CONFIGS[biz];
+  return `<div class="table-wrap"><table>
+    <thead><tr>
+      ${biz==='salon' ? '<th>الزبون</th><th>الخدمة</th><th>التاريخ</th><th>السعر</th><th>الحالة</th>' : ''}
+      ${biz==='insurance' ? '<th>الزبون</th><th>نوع العقد</th><th>تاريخ الانتهاء</th><th>القسط</th><th>الحالة</th>' : ''}
+      ${biz==='delivery' ? '<th>الزبون</th><th>المنتج</th><th>التاريخ</th><th>السعر</th><th>الحالة</th>' : ''}
+    </tr></thead>
+    <tbody>
+      ${items.map(it => {
+        const st = cfg.statuses[it.status] || {label:it.status, badge:'badge-gray'};
+        if(biz==='salon') return `<tr>
+          <td><strong>${esc(it.clientName||'—')}</strong></td>
+          <td>${esc(it.service||'—')}</td>
+          <td>${fmtDateTime(it.datetime)}</td>
+          <td>${fmtMoney(it.price)}</td>
+          <td><span class="badge ${st.badge}">${st.label}</span></td>
+        </tr>`;
+        if(biz==='insurance') return `<tr>
+          <td><strong>${esc(it.clientName||'—')}</strong></td>
+          <td>${esc(it.type||'—')}</td>
+          <td>${fmtDate(it.endDate)}</td>
+          <td>${fmtMoney(it.premium)}</td>
+          <td><span class="badge ${st.badge}">${st.label}</span></td>
+        </tr>`;
+        return `<tr>
+          <td><strong>${esc(it.clientName||'—')}</strong></td>
+          <td>${esc(it.product||'—')}</td>
+          <td>${fmtDateTime(it.createdAt)}</td>
+          <td>${fmtMoney(it.price)}</td>
+          <td><span class="badge ${st.badge}">${st.label}</span></td>
+        </tr>`;
+      }).join('')}
+    </tbody></table></div>`;
+}
+
+/* ============================================================
+   SALON: APPOINTMENTS
+   ============================================================ */
+function renderAppointments(){
+  return `
+    <div class="card mb-16" style="padding:12px 16px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="position:relative;flex:1;min-width:200px">
+          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3)">🔍</span>
+          <input class="form-input" id="q-search" placeholder="البحث باسم الزبون..." style="padding-right:36px" oninput="renderApptTable()">
+        </div>
+        <select class="form-input" id="q-status" onchange="renderApptTable()" style="width:auto">
+          <option value="">كل الحالات</option>
+          ${Object.entries(BIZ_CONFIGS.salon.statuses).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="openAppointmentModal()">+ موعد</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>الزبون</th><th>الهاتف</th><th>الخدمة</th><th>التاريخ</th><th>السعر</th><th>الحالة</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="appt-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    `;
+}
+function renderApptTable(){
+  const tbody = document.getElementById('appt-tbody');
+  if(!tbody) return;
+  const q = (document.getElementById('q-search')?.value || '').toLowerCase();
+  const sf = document.getElementById('q-status')?.value || '';
+  let items = loadItems('appointments');
+  if(q) items = items.filter(a => (a.clientName||'').toLowerCase().includes(q) || (a.clientPhone||'').includes(q));
+  if(sf) items = items.filter(a => a.status === sf);
+  if(!items.length){ tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-ico">📅</div>ما كاين حتى موعد</div></td></tr>`; return; }
+  tbody.innerHTML = items.map(a => {
+    const st = BIZ_CONFIGS.salon.statuses[a.status] || {label:a.status, badge:'badge-gray'};
+    return `<tr>
+      <td><strong>${esc(a.clientName||'')}</strong>${a.onlineBooking?' <span class="badge badge-blue" style="font-size:9px;padding:1px 6px">🌐 أونلاين</span>':''}</td>
+      <td><span class="text-mono">${esc(a.clientPhone||'—')}</span></td>
+      <td>${esc(a.service||'—')}</td>
+      <td>${fmtDateTime(a.datetime)}</td>
+      <td>${fmtMoney(a.price)}</td>
+      <td><span class="badge ${st.badge}">${st.label}</span></td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-green btn-sm btn-icon" onclick="sendApptReminder('${a.id}')" title="إرسال تذكير">📱</button>
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="openAppointmentModal('${a.id}')" title="تعديل">✏️</button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="deleteAppt('${a.id}')" title="حذف">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function deleteAppt(id){
+  if(!confirmAction('متيقن بغيتي تمسح هاد الموعد؟')) return;
+  deleteItem('appointments', id);
+  renderApptTable();
+  showToast('✓ تم الحذف');
+}
+function openAppointmentModal(id){
+  const editing = id ? findItem('appointments', id) : null;
+  const clients = loadItems('clients');
+  const services = loadItems('services');
+  const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
+  const html = `
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">${editing?'✏️ تعديل موعد':'+ موعد جديد'}</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">اسم الزبون *</label>
+            <input type="text" id="a-name" class="form-input" value="${esc(editing?.clientName||'')}" placeholder="محمد العلمي" list="clients-datalist">
+            <datalist id="clients-datalist">${clients.map(c=>`<option value="${esc(c.name)}">`).join('')}</datalist>
+          </div>
+          <div class="form-group">
+            <label class="form-label">رقم الهاتف *</label>
+            <input type="tel" id="a-phone" class="form-input" dir="ltr" value="${esc(editing?.clientPhone||'')}" placeholder="+212661234567">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">الخدمة</label>
+            <select id="a-service" class="form-input" onchange="document.getElementById('a-price').value=this.options[this.selectedIndex].dataset.price||''">
+              <option value="">اختار خدمة...</option>
+              ${services.map(s=>`<option value="${esc(s.name)}" data-price="${s.price}" ${editing?.service===s.name?'selected':''}>${esc(s.name)} — ${fmtMoney(s.price)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">السعر (درهم)</label>
+            <input type="number" id="a-price" class="form-input" value="${editing?.price||''}" placeholder="50">
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">التاريخ والوقت *</label>
+            <input type="datetime-local" id="a-datetime" class="form-input" value="${editing?.datetime?new Date(editing.datetime).toISOString().slice(0,16):nowLocal}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">الحالة</label>
+            <select id="a-status" class="form-input">
+              ${Object.entries(BIZ_CONFIGS.salon.statuses).map(([k,v])=>`<option value="${k}" ${editing?.status===k?'selected':''}>${v.label}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ملاحظات</label>
+          <textarea id="a-notes" class="form-input" rows="2" placeholder="ملاحظات...">${esc(editing?.notes||'')}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveAppointment('${id||''}')">✓ حفظ</button>
+      </div>
+    </div>`;
+  openModal(html);
+}
+function saveAppointment(id){
+  const data = {
+    clientName: document.getElementById('a-name').value.trim(),
+    clientPhone: document.getElementById('a-phone').value.trim(),
+    service: document.getElementById('a-service').value,
+    price: Number(document.getElementById('a-price').value) || 0,
+    datetime: document.getElementById('a-datetime').value ? new Date(document.getElementById('a-datetime').value).getTime() : null,
+    status: document.getElementById('a-status').value || 'pending',
+    notes: document.getElementById('a-notes').value.trim()
+  };
+  if(!data.clientName || !data.clientPhone){ showToast('الاسم والهاتف مطلوبين', 'error'); return; }
+  if(!data.datetime){ showToast('التاريخ مطلوب', 'error'); return; }
+  if(id) updateItem('appointments', id, data);
+  else {
+    addItem('appointments', data);
+    // also add client if doesn't exist
+    const existing = loadItems('clients').find(c => c.phone === data.clientPhone);
+    if(!existing) addItem('clients', {name:data.clientName, phone:data.clientPhone});
+  }
+  if(STATE.business==='salon') registerSalonInDirectory();
+  closeModal();
+  showToast('✓ تم الحفظ');
+  renderApptTable();
+}
+function sendApptReminder(id){
+  const a = findItem('appointments', id);
+  if(!a) return;
+  const msg = `📅 *تذكير بالموعد*\n\nالسلام عليكم ${a.clientName}،\n\nعندك موعد ${a.service?'ل'+a.service:''} فـ ${fmtDateTime(a.datetime)}.\n\nشكرا على ثقتك 🙏\n${STATE.user?.name||''}`;
+  sendWhatsApp(a.clientPhone, msg);
+}
+
+/* ============================================================
+   SALON: SERVICES
+   ============================================================ */
+function renderServices(){
+  const services = loadItems('services');
+  return `
+    <div class="card mb-16" style="padding:12px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong>✂️ الخدمات</strong> <span class="text-muted">(${services.length} خدمة)</span></div>
+        <button class="btn btn-primary btn-sm" onclick="openServiceModal()">+ خدمة</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>الخدمة</th><th>السعر</th><th>المدة</th><th>إجراءات</th></tr></thead>
+          <tbody>
+            ${services.length ? services.map(s => `
+              <tr>
+                <td><strong>${esc(s.name)}</strong></td>
+                <td>${fmtMoney(s.price)}</td>
+                <td>${s.duration||0} دقيقة</td>
+                <td>
+                  <button class="btn btn-secondary btn-sm btn-icon" onclick="openServiceModal('${s.id}')">✏️</button>
+                  <button class="btn btn-danger btn-sm btn-icon" onclick="deleteService('${s.id}')">🗑️</button>
+                </td>
+              </tr>`).join('') : `<tr><td colspan="4"><div class="empty-state"><div class="empty-ico">✂️</div>ما كاين حتى خدمة</div></td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+function openServiceModal(id){
+  const editing = id ? findItem('services', id) : null;
+  openModal(`
+    <div class="modal" style="max-width:420px">
+      <div class="modal-header">
+        <span class="modal-title">${editing?'✏️ تعديل خدمة':'+ خدمة جديدة'}</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">الاسم *</label><input type="text" id="s-name" class="form-input" value="${esc(editing?.name||'')}" placeholder="حلاقة عادية"></div>
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">السعر (درهم) *</label><input type="number" id="s-price" class="form-input" value="${editing?.price||''}" placeholder="50"></div>
+          <div class="form-group"><label class="form-label">المدة (دقيقة)</label><input type="number" id="s-duration" class="form-input" value="${editing?.duration||''}" placeholder="30"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveService('${id||''}')">✓ حفظ</button>
+      </div>
+    </div>`);
+}
+function saveService(id){
+  const data = {
+    name: document.getElementById('s-name').value.trim(),
+    price: Number(document.getElementById('s-price').value) || 0,
+    duration: Number(document.getElementById('s-duration').value) || 0
+  };
+  if(!data.name || !data.price){ showToast('الاسم والسعر مطلوبين', 'error'); return; }
+  if(id) updateItem('services', id, data); else addItem('services', data);
+  if(STATE.business==='salon') registerSalonInDirectory();
+  closeModal();
+  showToast('✓ تم الحفظ');
+  renderPage('services');
+}
+function deleteService(id){
+  if(!confirmAction('مسح هاد الخدمة؟')) return;
+  deleteItem('services', id);
+  renderPage('services');
+  showToast('✓ تم الحذف');
+}
+
+/* ============================================================
+   INSURANCE: CONTRACTS
+   ============================================================ */
+function renderContracts(){
+  return `
+    <div class="card mb-16" style="padding:12px 16px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="position:relative;flex:1;min-width:200px">
+          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3)">🔍</span>
+          <input class="form-input" id="q-search" placeholder="البحث..." style="padding-right:36px" oninput="renderContractsTable()">
+        </div>
+        <select class="form-input" id="q-status" onchange="renderContractsTable()" style="width:auto">
+          <option value="">كل الحالات</option>
+          ${Object.entries(BIZ_CONFIGS.insurance.statuses).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="openContractModal()">+ عقد</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>الزبون</th><th>نوع العقد</th><th>رقم العقد</th><th>تاريخ البداية</th><th>تاريخ الانتهاء</th><th>القسط</th><th>الحالة</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="contracts-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    `;
+}
+function computeContractStatus(c){
+  if(c.manualStatus && c.manualStatus !== 'auto') return c.manualStatus;
+  const now = Date.now();
+  const end = c.endDate ? new Date(c.endDate).getTime() : null;
+  if(!end) return 'active';
+  if(end < now) return 'expired';
+  if(end < now + 30*86400000) return 'expiring';
+  return 'active';
+}
+function renderContractsTable(){
+  const tbody = document.getElementById('contracts-tbody');
+  if(!tbody) return;
+  const q = (document.getElementById('q-search')?.value || '').toLowerCase();
+  const sf = document.getElementById('q-status')?.value || '';
+  let items = loadItems('contracts').map(c => ({...c, status: computeContractStatus(c)}));
+  if(q) items = items.filter(c => (c.clientName||'').toLowerCase().includes(q) || (c.contractNumber||'').toLowerCase().includes(q));
+  if(sf) items = items.filter(c => c.status === sf);
+  if(!items.length){ tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-ico">📄</div>ما كاين حتى عقد</div></td></tr>`; return; }
+  tbody.innerHTML = items.map(c => {
+    const st = BIZ_CONFIGS.insurance.statuses[c.status] || {label:c.status, badge:'badge-gray'};
+    return `<tr>
+      <td><strong>${esc(c.clientName||'')}</strong><div style="font-size:11px;color:var(--text2)">${esc(c.clientPhone||'')}</div></td>
+      <td>${esc(c.type||'—')}</td>
+      <td><span class="text-mono">${esc(c.contractNumber||'—')}</span></td>
+      <td>${fmtDate(c.startDate)}</td>
+      <td>${fmtDate(c.endDate)}</td>
+      <td>${fmtMoney(c.premium)}</td>
+      <td><span class="badge ${st.badge}">${st.label}</span></td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-green btn-sm btn-icon" onclick="sendContractReminder('${c.id}')" title="تذكير">📱</button>
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="openContractModal('${c.id}')" title="تعديل">✏️</button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="deleteContract('${c.id}')" title="حذف">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function deleteContract(id){
+  if(!confirmAction('مسح هاد العقد؟')) return;
+  deleteItem('contracts', id);
+  renderContractsTable();
+  showToast('✓ تم الحذف');
+}
+function openContractModal(id){
+  const editing = id ? findItem('contracts', id) : null;
+  const clients = loadItems('clients');
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">${editing?'✏️ تعديل عقد':'+ عقد جديد'}</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">اسم الزبون *</label><input type="text" id="c-name" class="form-input" value="${esc(editing?.clientName||'')}" list="clients-dl"><datalist id="clients-dl">${clients.map(x=>`<option value="${esc(x.name)}">`).join('')}</datalist></div>
+          <div class="form-group"><label class="form-label">الهاتف *</label><input type="tel" id="c-phone" class="form-input" dir="ltr" value="${esc(editing?.clientPhone||'')}" placeholder="+212661234567"></div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">نوع العقد *</label>
+            <select id="c-type" class="form-input">
+              ${BIZ_CONFIGS.insurance.contractTypes.map(t=>`<option ${editing?.type===t?'selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">رقم العقد</label><input type="text" id="c-num" class="form-input" dir="ltr" value="${esc(editing?.contractNumber||'')}" placeholder="AX-2026-001"></div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">تاريخ البداية *</label><input type="date" id="c-start" class="form-input" value="${editing?.startDate||''}"></div>
+          <div class="form-group"><label class="form-label">تاريخ الانتهاء *</label><input type="date" id="c-end" class="form-input" value="${editing?.endDate||''}"></div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">القسط السنوي (درهم)</label><input type="number" id="c-premium" class="form-input" value="${editing?.premium||''}" placeholder="1500"></div>
+          <div class="form-group">
+            <label class="form-label">الحالة</label>
+            <select id="c-status" class="form-input">
+              <option value="auto">تلقائي</option>
+              ${Object.entries(BIZ_CONFIGS.insurance.statuses).map(([k,v])=>`<option value="${k}" ${editing?.manualStatus===k?'selected':''}>${v.label}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">ملاحظات</label><textarea id="c-notes" class="form-input" rows="2">${esc(editing?.notes||'')}</textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveContract('${id||''}')">✓ حفظ</button>
+      </div>
+    </div>`);
+}
+function saveContract(id){
+  const data = {
+    clientName: document.getElementById('c-name').value.trim(),
+    clientPhone: document.getElementById('c-phone').value.trim(),
+    type: document.getElementById('c-type').value,
+    contractNumber: document.getElementById('c-num').value.trim(),
+    startDate: document.getElementById('c-start').value,
+    endDate: document.getElementById('c-end').value,
+    premium: Number(document.getElementById('c-premium').value) || 0,
+    manualStatus: document.getElementById('c-status').value,
+    notes: document.getElementById('c-notes').value.trim()
+  };
+  if(!data.clientName || !data.clientPhone){ showToast('الاسم والهاتف مطلوبين', 'error'); return; }
+  if(!data.startDate || !data.endDate){ showToast('التواريخ مطلوبة', 'error'); return; }
+  if(id) updateItem('contracts', id, data);
+  else {
+    addItem('contracts', data);
+    const existing = loadItems('clients').find(c => c.phone === data.clientPhone);
+    if(!existing) addItem('clients', {name:data.clientName, phone:data.clientPhone});
+  }
+  closeModal();
+  showToast('✓ تم الحفظ');
+  renderContractsTable();
+}
+function sendContractReminder(id){
+  const c = findItem('contracts', id);
+  if(!c) return;
+  const st = computeContractStatus(c);
+  let msg;
+  if(st === 'expiring'){
+    msg = `🔔 *تذكير بتجديد التأمين*\n\nالسلام عليكم ${c.clientName}،\n\nعقد ${c.type} ديالك غادي ينتهي فـ ${fmtDate(c.endDate)}.\n\nرجاء اتصل بينا باش نجددو العقد قبل ما ينتهي.\n\n${STATE.user?.name||''}`;
+  } else if(st === 'expired'){
+    msg = `⚠️ *انتهى عقد التأمين*\n\nالسلام عليكم ${c.clientName}،\n\nعقد ${c.type} ديالك انتهى فـ ${fmtDate(c.endDate)}.\n\nاتصل بينا باش نجددو العقد.\n\n${STATE.user?.name||''}`;
+  } else {
+    msg = `📄 *عقد التأمين*\n\nالسلام عليكم ${c.clientName}،\n\nعقدك ${c.type} ساري حتى ${fmtDate(c.endDate)}.\n\nشكرا على ثقتك 🙏\n${STATE.user?.name||''}`;
+  }
+  sendWhatsApp(c.clientPhone, msg);
+}
+
+/* ============================================================
+   INSURANCE: RENEWALS
+   ============================================================ */
+function renderRenewals(){
+  const contracts = loadItems('contracts').map(c => ({...c, status: computeContractStatus(c)}));
+  const expiring = contracts.filter(c => c.status === 'expiring').sort((a,b)=>new Date(a.endDate)-new Date(b.endDate));
+  const expired = contracts.filter(c => c.status === 'expired').sort((a,b)=>new Date(b.endDate)-new Date(a.endDate));
+  const renderRow = (c) => {
+    const daysLeft = Math.round((new Date(c.endDate).getTime() - Date.now()) / 86400000);
+    const daysLabel = daysLeft > 0 ? `باقي ${daysLeft} يوم` : `انتهى منذ ${Math.abs(daysLeft)} يوم`;
+    return `<tr>
+      <td><strong>${esc(c.clientName)}</strong><div style="font-size:11px;color:var(--text2)">${esc(c.clientPhone||'')}</div></td>
+      <td>${esc(c.type)}</td>
+      <td>${fmtDate(c.endDate)}<div style="font-size:11px;color:var(--${daysLeft<0?'danger':daysLeft<7?'danger':'warning'})">${daysLabel}</div></td>
+      <td>${fmtMoney(c.premium)}</td>
+      <td><button class="btn btn-green btn-sm" onclick="sendContractReminder('${c.id}')">📱 إرسال تذكير</button></td>
+    </tr>`;
+  };
+  return `
+    <div class="hero-card" style="background:linear-gradient(135deg,#FF8B00,#DE350B)">
+      <h2>🔔 تنبيهات التجديد</h2>
+      <p>العقود اللي قاربت تنتهي ولا انتهت — بعت تذكير للزبناء</p>
+    </div>
+    <div class="card mb-16">
+      <div style="font-size:13px;font-weight:700;color:var(--warning);margin-bottom:12px">⏰ قارب ينتهي (${expiring.length})</div>
+      ${expiring.length ? `<div class="table-wrap"><table>
+        <thead><tr><th>الزبون</th><th>نوع العقد</th><th>تاريخ الانتهاء</th><th>القسط</th><th>إجراء</th></tr></thead>
+        <tbody>${expiring.map(renderRow).join('')}</tbody>
+      </table></div>` : '<div class="empty-state"><div class="empty-ico">✅</div>ما كاين حتى عقد قارب ينتهي</div>'}
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:var(--danger);margin-bottom:12px">❌ منتهية (${expired.length})</div>
+      ${expired.length ? `<div class="table-wrap"><table>
+        <thead><tr><th>الزبون</th><th>نوع العقد</th><th>تاريخ الانتهاء</th><th>القسط</th><th>إجراء</th></tr></thead>
+        <tbody>${expired.map(renderRow).join('')}</tbody>
+      </table></div>` : '<div class="empty-state"><div class="empty-ico">👍</div>ما كاين حتى عقد منتهي</div>'}
+    </div>`;
+}
+
+/* ============================================================
+   DELIVERY: ORDERS
+   ============================================================ */
+function renderOrders(){
+  return `
+    <div class="card mb-16" style="padding:12px 16px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="position:relative;flex:1;min-width:200px">
+          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3)">🔍</span>
+          <input class="form-input" id="q-search" placeholder="البحث..." style="padding-right:36px" oninput="renderOrdersTable()">
+        </div>
+        <select class="form-input" id="q-status" onchange="renderOrdersTable()" style="width:auto">
+          <option value="">كل الحالات</option>
+          ${Object.entries(BIZ_CONFIGS.delivery.statuses).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="openOrderModal()">+ طلب</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>رقم الطلب</th><th>الزبون</th><th>المنتج</th><th>العنوان</th><th>السائق</th><th>السعر</th><th>الحالة</th><th>إجراءات</th>
+          </tr></thead>
+          <tbody id="orders-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    `;
+}
+function renderOrdersTable(){
+  const tbody = document.getElementById('orders-tbody');
+  if(!tbody) return;
+  const q = (document.getElementById('q-search')?.value || '').toLowerCase();
+  const sf = document.getElementById('q-status')?.value || '';
+  let items = loadItems('orders');
+  if(q) items = items.filter(o => (o.clientName||'').toLowerCase().includes(q) || (o.orderNumber||'').toLowerCase().includes(q) || (o.product||'').toLowerCase().includes(q));
+  if(sf) items = items.filter(o => o.status === sf);
+  const drivers = loadItems('drivers');
+  if(!items.length){ tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-ico">📦</div>ما كاين حتى طلب</div></td></tr>`; return; }
+  tbody.innerHTML = items.map(o => {
+    const st = BIZ_CONFIGS.delivery.statuses[o.status] || {label:o.status, badge:'badge-gray'};
+    const driver = drivers.find(d => d.id === o.driverId);
+    return `<tr>
+      <td><span class="text-mono">${esc(o.orderNumber||('#'+o.id.slice(-5)))}</span></td>
+      <td><strong>${esc(o.clientName||'')}</strong><div style="font-size:11px;color:var(--text2)">${esc(o.clientPhone||'')}</div></td>
+      <td>${esc(o.product||'—')}</td>
+      <td style="max-width:160px;font-size:12px">${esc(o.address||'—')}</td>
+      <td>${driver?esc(driver.name):'—'}</td>
+      <td>${fmtMoney(o.price)}</td>
+      <td>
+        <select class="form-input" style="padding:4px 8px;font-size:11px;width:auto" onchange="changeOrderStatus('${o.id}', this.value)">
+          ${Object.entries(BIZ_CONFIGS.delivery.statuses).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v.label}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-green btn-sm btn-icon" onclick="sendOrderUpdate('${o.id}')" title="إشعار الزبون">📱</button>
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="openOrderModal('${o.id}')" title="تعديل">✏️</button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="deleteOrder('${o.id}')" title="حذف">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function changeOrderStatus(id, newStatus){
+  updateItem('orders', id, {status: newStatus});
+  showToast('✓ تم تحديث الحالة');
+}
+function deleteOrder(id){
+  if(!confirmAction('مسح هاد الطلب؟')) return;
+  deleteItem('orders', id);
+  renderOrdersTable();
+  showToast('✓ تم الحذف');
+}
+function openOrderModal(id){
+  const editing = id ? findItem('orders', id) : null;
+  const clients = loadItems('clients');
+  const drivers = loadItems('drivers');
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">${editing?'✏️ تعديل طلب':'+ طلب جديد'}</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">رقم الطلب</label><input type="text" id="o-num" class="form-input" dir="ltr" value="${esc(editing?.orderNumber||('ORD-'+Date.now().toString().slice(-6)))}"></div>
+          <div class="form-group">
+            <label class="form-label">الحالة</label>
+            <select id="o-status" class="form-input">
+              ${Object.entries(BIZ_CONFIGS.delivery.statuses).map(([k,v])=>`<option value="${k}" ${editing?.status===k?'selected':(!editing&&k==='new'?'selected':'')}>${v.label}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">اسم الزبون *</label><input type="text" id="o-name" class="form-input" value="${esc(editing?.clientName||'')}" list="clients-dl"><datalist id="clients-dl">${clients.map(x=>`<option value="${esc(x.name)}">`).join('')}</datalist></div>
+          <div class="form-group"><label class="form-label">الهاتف *</label><input type="tel" id="o-phone" class="form-input" dir="ltr" value="${esc(editing?.clientPhone||'')}" placeholder="+212661234567"></div>
+        </div>
+        <div class="form-group"><label class="form-label">المنتج / الوصف *</label><input type="text" id="o-product" class="form-input" value="${esc(editing?.product||'')}" placeholder="مثال: بيتزا + كوكا"></div>
+        <div class="form-group"><label class="form-label">العنوان</label><textarea id="o-address" class="form-input" rows="2" placeholder="العنوان الكامل...">${esc(editing?.address||'')}</textarea></div>
+        <div class="form-grid-2">
+          <div class="form-group"><label class="form-label">السعر (درهم)</label><input type="number" id="o-price" class="form-input" value="${editing?.price||''}"></div>
+          <div class="form-group">
+            <label class="form-label">السائق</label>
+            <select id="o-driver" class="form-input">
+              <option value="">—</option>
+              ${drivers.map(d=>`<option value="${d.id}" ${editing?.driverId===d.id?'selected':''}>${esc(d.name)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">ملاحظات</label><textarea id="o-notes" class="form-input" rows="2">${esc(editing?.notes||'')}</textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveOrder('${id||''}')">✓ حفظ</button>
+      </div>
+    </div>`);
+}
+function saveOrder(id){
+  const data = {
+    orderNumber: document.getElementById('o-num').value.trim(),
+    clientName: document.getElementById('o-name').value.trim(),
+    clientPhone: document.getElementById('o-phone').value.trim(),
+    product: document.getElementById('o-product').value.trim(),
+    address: document.getElementById('o-address').value.trim(),
+    price: Number(document.getElementById('o-price').value) || 0,
+    driverId: document.getElementById('o-driver').value,
+    status: document.getElementById('o-status').value,
+    notes: document.getElementById('o-notes').value.trim()
+  };
+  if(!data.clientName || !data.clientPhone || !data.product){ showToast('الاسم، الهاتف، والمنتج مطلوبين', 'error'); return; }
+  if(id) updateItem('orders', id, data);
+  else {
+    addItem('orders', data);
+    const existing = loadItems('clients').find(c => c.phone === data.clientPhone);
+    if(!existing) addItem('clients', {name:data.clientName, phone:data.clientPhone});
+  }
+  closeModal();
+  showToast('✓ تم الحفظ');
+  renderOrdersTable();
+}
+function sendOrderUpdate(id){
+  const o = findItem('orders', id);
+  if(!o) return;
+  const statusMsg = {
+    new: 'استلمنا طلبك وغادي نبداو التحضير قريباً',
+    preparing: 'طلبك قيد التحضير',
+    on_way: 'طلبك ف الطريق ليك دابا',
+    delivered: 'طلبك تم توصيله، شكرا على ثقتك',
+    cancelled: 'طلبك تم إلغاؤه'
+  }[o.status] || '';
+  const msg = `📦 *تحديث الطلب ${o.orderNumber||''}*\n\nالسلام عليكم ${o.clientName}،\n\n${statusMsg}\n\nالمنتج: ${o.product}\nالسعر: ${fmtMoney(o.price)}\n\n${STATE.user?.name||''}`;
+  sendWhatsApp(o.clientPhone, msg);
+}
+
+/* ============================================================
+   DELIVERY: DRIVERS
+   ============================================================ */
+function renderDrivers(){
+  const drivers = loadItems('drivers');
+  const orders = loadItems('orders');
+  return `
+    <div class="card mb-16" style="padding:12px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong>🚗 السائقون</strong> <span class="text-muted">(${drivers.length})</span></div>
+        <button class="btn btn-primary btn-sm" onclick="openDriverModal()">+ سائق</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>السائق</th><th>الهاتف</th><th>المركبة</th><th>طلبات نشطة</th><th>إجراءات</th></tr></thead>
+          <tbody>
+            ${drivers.length ? drivers.map(d => {
+              const active = orders.filter(o => o.driverId===d.id && ['new','preparing','on_way'].includes(o.status)).length;
+              return `<tr>
+                <td><strong>${esc(d.name)}</strong></td>
+                <td><span class="text-mono">${esc(d.phone||'—')}</span></td>
+                <td>${esc(d.vehicle||'—')}</td>
+                <td><span class="badge ${active>0?'badge-orange':'badge-gray'}">${active}</span></td>
+                <td>
+                  <button class="btn btn-secondary btn-sm btn-icon" onclick="openDriverModal('${d.id}')">✏️</button>
+                  <button class="btn btn-danger btn-sm btn-icon" onclick="deleteDriver('${d.id}')">🗑️</button>
+                </td>
+              </tr>`;
+            }).join('') : `<tr><td colspan="5"><div class="empty-state"><div class="empty-ico">🚗</div>ما كاين حتى سائق</div></td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+function openDriverModal(id){
+  const editing = id ? findItem('drivers', id) : null;
+  openModal(`
+    <div class="modal" style="max-width:420px">
+      <div class="modal-header">
+        <span class="modal-title">${editing?'✏️ تعديل سائق':'+ سائق جديد'}</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">الاسم *</label><input type="text" id="d-name" class="form-input" value="${esc(editing?.name||'')}"></div>
+        <div class="form-group"><label class="form-label">الهاتف</label><input type="tel" id="d-phone" class="form-input" dir="ltr" value="${esc(editing?.phone||'')}" placeholder="+212661234567"></div>
+        <div class="form-group"><label class="form-label">المركبة</label><input type="text" id="d-vehicle" class="form-input" value="${esc(editing?.vehicle||'')}" placeholder="دراجة نارية — لوحة 123-أ-45"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveDriver('${id||''}')">✓ حفظ</button>
+      </div>
+    </div>`);
+}
+function saveDriver(id){
+  const data = {
+    name: document.getElementById('d-name').value.trim(),
+    phone: document.getElementById('d-phone').value.trim(),
+    vehicle: document.getElementById('d-vehicle').value.trim()
+  };
+  if(!data.name){ showToast('الاسم مطلوب', 'error'); return; }
+  if(id) updateItem('drivers', id, data); else addItem('drivers', data);
+  closeModal();
+  showToast('✓ تم الحفظ');
+  renderPage('drivers');
+}
+function deleteDriver(id){
+  if(!confirmAction('مسح هاد السائق؟')) return;
+  deleteItem('drivers', id);
+  renderPage('drivers');
+  showToast('✓ تم الحذف');
+}
+
+/* ============================================================
+   CLIENTS (shared across businesses)
+   ============================================================ */
+function renderClientsList(biz){
+  return `
+    <div class="card mb-16" style="padding:12px 16px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="position:relative;flex:1;min-width:200px">
+          <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text3)">🔍</span>
+          <input class="form-input" id="q-search" placeholder="البحث بالاسم أو الهاتف..." style="padding-right:36px" oninput="renderClientsTable('${biz}')">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openClientModal('${biz}')">+ زبون</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>عدد ${BIZ_CONFIGS[biz].itemsName}</th><th>تاريخ الإضافة</th><th>إجراءات</th></tr></thead>
+          <tbody id="clients-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    `;
+}
+function renderClientsTable(biz){
+  const tbody = document.getElementById('clients-tbody');
+  if(!tbody) return;
+  const q = (document.getElementById('q-search')?.value || '').toLowerCase();
+  let clients = loadItems('clients');
+  if(q) clients = clients.filter(c => (c.name||'').toLowerCase().includes(q) || (c.phone||'').includes(q));
+  const itemsKind = biz==='salon' ? 'appointments' : biz==='insurance' ? 'contracts' : 'orders';
+  const allItems = loadItems(itemsKind);
+  if(!clients.length){ tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-ico">👥</div>ما كاين حتى زبون</div></td></tr>`; return; }
+  tbody.innerHTML = clients.map(c => {
+    const count = allItems.filter(i => i.clientPhone === c.phone).length;
+    return `<tr>
+      <td><strong>${esc(c.name)}</strong></td>
+      <td><span class="text-mono">${esc(c.phone||'—')}</span></td>
+      <td><span class="text-mono" style="font-size:11px">${esc(c.email||'—')}</span></td>
+      <td><span class="badge badge-blue">${count}</span></td>
+      <td>${fmtDate(c.createdAt)}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-green btn-sm btn-icon" onclick="openWhatsAppForClient('${c.id}')" title="واتساب">📱</button>
+          <button class="btn btn-secondary btn-sm btn-icon" onclick="openClientModal('${biz}','${c.id}')" title="تعديل">✏️</button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="deleteClient('${c.id}','${biz}')" title="حذف">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function openClientModal(biz, id){
+  const editing = id ? findItem('clients', id) : null;
+  openModal(`
+    <div class="modal" style="max-width:420px">
+      <div class="modal-header">
+        <span class="modal-title">${editing?'✏️ تعديل زبون':'+ زبون جديد'}</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">الاسم *</label><input type="text" id="cl-name" class="form-input" value="${esc(editing?.name||'')}"></div>
+        <div class="form-group"><label class="form-label">الهاتف *</label><input type="tel" id="cl-phone" class="form-input" dir="ltr" value="${esc(editing?.phone||'')}" placeholder="+212661234567"></div>
+        <div class="form-group"><label class="form-label">البريد الإلكتروني</label><input type="email" id="cl-email" class="form-input" dir="ltr" value="${esc(editing?.email||'')}"></div>
+        <div class="form-group"><label class="form-label">ملاحظات</label><textarea id="cl-notes" class="form-input" rows="2">${esc(editing?.notes||'')}</textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveClient('${id||''}','${biz}')">✓ حفظ</button>
+      </div>
+    </div>`);
+}
+function saveClient(id, biz){
+  const data = {
+    name: document.getElementById('cl-name').value.trim(),
+    phone: document.getElementById('cl-phone').value.trim(),
+    email: document.getElementById('cl-email').value.trim(),
+    notes: document.getElementById('cl-notes').value.trim()
+  };
+  if(!data.name || !data.phone){ showToast('الاسم والهاتف مطلوبين', 'error'); return; }
+  if(id) updateItem('clients', id, data); else addItem('clients', data);
+  closeModal();
+  showToast('✓ تم الحفظ');
+  renderClientsTable(biz);
+}
+function deleteClient(id, biz){
+  if(!confirmAction('مسح هاد الزبون؟')) return;
+  deleteItem('clients', id);
+  renderClientsTable(biz);
+  showToast('✓ تم الحذف');
+}
+function openWhatsAppForClient(id){
+  const c = findItem('clients', id);
+  if(!c) return;
+  openModal(`
+    <div class="modal" style="max-width:480px">
+      <div class="modal-header">
+        <span class="modal-title">📱 إرسال واتساب إلى ${esc(c.name)}</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">الرسالة</label><textarea id="wa-msg" class="form-input" rows="5" placeholder="اكتب الرسالة...">السلام عليكم ${c.name}، </textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-green" onclick="sendWhatsApp('${c.phone}', document.getElementById('wa-msg').value); closeModal();">📱 إرسال</button>
+      </div>
+    </div>`);
+}
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+function renderSettings(){
+  const stats = {
+    clients: loadItems('clients').length,
+    items: loadItems(STATE.business==='salon'?'appointments':STATE.business==='insurance'?'contracts':'orders').length
+  };
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px" id="settings-grid">
+      <div class="card">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:16px">📇 معلومات المحل</div>
+        <div class="form-group"><label class="form-label">الاسم</label><input type="text" id="cfg-name" class="form-input" value="${esc(STATE.user?.name||'')}"></div>
+        <div class="form-group"><label class="form-label">الهاتف</label><input type="tel" id="cfg-phone" class="form-input" dir="ltr" value="${esc(STATE.user?.phone||'')}"></div>
+        <div class="form-group"><label class="form-label">البريد</label><input type="email" id="cfg-email" class="form-input" dir="ltr" value="${esc(STATE.user?.email||'')}" disabled></div>
+        <button class="btn btn-primary" onclick="saveProfile()" style="width:100%;justify-content:center">💾 حفظ</button>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:16px">📱 إعدادات واتساب</div>
+        <div style="background:var(--primary-light);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--primary-dark)">📌 من <strong>app.ultramsg.com</strong> → Dashboard</div>
+        <div class="form-group"><label class="form-label">Instance ID</label><input type="text" id="cfg-instance" class="form-input" dir="ltr" value="${esc(STATE.whatsapp.instance||'')}" placeholder="instance169491"></div>
+        <div class="form-group"><label class="form-label">Token</label><input type="password" id="cfg-token" class="form-input" dir="ltr" value="${esc(STATE.whatsapp.token||'')}" placeholder="••••••••"></div>
+        <div class="divider"></div>
+        <div class="form-group">
+          <label class="form-label">اختبار الاتصال</label>
+          <div style="display:flex;gap:8px">
+            <input type="tel" id="test-phone" class="form-input" dir="ltr" placeholder="+212661234567" style="flex:1">
+            <button class="btn btn-green" onclick="testWhatsApp()" id="test-btn">🧪 تجربة</button>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveWhatsAppSettings()" style="width:100%;justify-content:center">💾 حفظ الإعدادات</button>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:16px">🎨 المظهر</div>
+        <div style="display:flex;gap:10px;margin-bottom:14px">
+          <button class="btn ${STATE.theme==='light'?'btn-primary':'btn-secondary'}" onclick="if(STATE.theme!=='light')toggleTheme();renderPage('settings')" style="flex:1;justify-content:center">☀️ فاتح</button>
+          <button class="btn ${STATE.theme==='dark'?'btn-primary':'btn-secondary'}" onclick="if(STATE.theme!=='dark')toggleTheme();renderPage('settings')" style="flex:1;justify-content:center">🌙 غامق</button>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:10px">💾 البيانات</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="exportData()">📥 تصدير</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('import-file').click()">📤 استيراد</button>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this.files[0])">
+          <button class="btn btn-danger btn-sm" onclick="clearBusinessData()">🗑️ مسح بيانات ${BIZ_CONFIGS[STATE.business].name}</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:16px">📊 إحصائيات التخزين</div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><span class="text-muted">الزبناء</span><strong>${stats.clients}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)"><span class="text-muted">${BIZ_CONFIGS[STATE.business].itemsName}</span><strong>${stats.items}</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0"><span class="text-muted">النشاط الحالي</span><strong>${BIZ_CONFIGS[STATE.business].icon} ${BIZ_CONFIGS[STATE.business].name}</strong></div>
+        <div style="background:var(--accent-light);border-radius:8px;padding:10px;font-size:11px;color:var(--accent);margin-top:10px">💡 البيانات محفوظة ف المتصفح (localStorage). دير تصدير منتظم باش ما تخسرش البيانات.</div>
+      </div>
+    </div>`;
+}
+function saveProfile(){
+  const name = document.getElementById('cfg-name').value.trim();
+  const phone = document.getElementById('cfg-phone').value.trim();
+  if(!name){ showToast('الاسم مطلوب', 'error'); return; }
+  STATE.user.name = name;
+  STATE.user.phone = phone;
+  const users = STORE.get('users', {});
+  if(users[STATE.user.email]){
+    users[STATE.user.email].name = name;
+    users[STATE.user.email].phone = phone;
+    STORE.set('users', users);
+  }
+  STORE.set('session', STATE.user);
+  document.getElementById('clinic-name').textContent = name;
+  document.getElementById('clinic-avatar').textContent = name[0].toUpperCase();
+  showToast('✓ تم الحفظ');
+}
+function loadWhatsAppSettings(){
+  const s = STORE.get('whatsapp_'+STATE.user?.email, {instance:'', token:''});
+  STATE.whatsapp = s;
+}
+function saveWhatsAppSettings(){
+  STATE.whatsapp.instance = document.getElementById('cfg-instance').value.trim();
+  STATE.whatsapp.token = document.getElementById('cfg-token').value.trim();
+  STORE.set('whatsapp_'+STATE.user.email, STATE.whatsapp);
+  showToast('✓ تم حفظ إعدادات واتساب');
+}
+async function testWhatsApp(){
+  const phone = document.getElementById('test-phone').value.trim();
+  const instance = document.getElementById('cfg-instance').value.trim();
+  const token = document.getElementById('cfg-token').value.trim();
+  if(!phone || !instance || !token){ showToast('عَمَّر كل الحقول', 'error'); return; }
+  const btn = document.getElementById('test-btn');
+  btn.disabled = true; btn.textContent = '⏳';
+  try {
+    const params = new URLSearchParams();
+    params.append('token', token);
+    params.append('to', phone.replace(/[^0-9+]/g, ''));
+    params.append('body', `🧪 *${STATE.user?.name||'MultiBiz'}*\n\nاختبار الاتصال ناجح ✅\n\nالإعدادات صحيحة.`);
+    const r = await fetch(`https://api.ultramsg.com/${instance}/messages/chat`, {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: params.toString()
+    });
+    const d = await r.json();
+    if(d.sent==='true'||d.sent===true) showToast('✅ تم الإرسال!');
+    else showToast('❌ فشل: ' + (d.error || JSON.stringify(d)), 'error');
+  } catch(e){ showToast('❌ خطأ: '+e.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = '🧪 تجربة'; }
+}
+
+/* ============================================================
+   WHATSAPP (UltraMsg) — used by all business types
+   ============================================================ */
+async function sendWhatsApp(phone, message){
+  if(!STATE.whatsapp.instance || !STATE.whatsapp.token){
+    // Fallback: open wa.me link
+    const cleanPhone = (phone||'').replace(/[^0-9+]/g,'').replace(/^\+/, '');
+    if(!cleanPhone){ showToast('رقم الهاتف مطلوب', 'error'); return; }
+    const url = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(message);
+    window.open(url, '_blank');
+    showToast('💡 افتح WhatsApp — ضبط UltraMsg ف الإعدادات للإرسال التلقائي', 'info');
+    return;
+  }
+  try {
+    const params = new URLSearchParams();
+    params.append('token', STATE.whatsapp.token);
+    params.append('to', (phone||'').replace(/[^0-9+]/g, ''));
+    params.append('body', message);
+    const r = await fetch(`https://api.ultramsg.com/${STATE.whatsapp.instance}/messages/chat`, {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: params.toString()
+    });
+    const d = await r.json();
+    if(d.sent==='true'||d.sent===true) showToast('✅ تم إرسال الرسالة');
+    else showToast('❌ فشل الإرسال', 'error');
+  } catch(e){ showToast('❌ خطأ: '+e.message, 'error'); }
+}
+
+/* ============================================================
+   EXPORT / IMPORT / CLEAR
+   ============================================================ */
+function exportData(){
+  const biz = STATE.business;
+  const kinds = ['clients','appointments','contracts','services','orders','drivers'];
+  const data = {};
+  kinds.forEach(k => { data[k] = loadItems(k); });
+  const exportObj = {
+    version: 1,
+    business: biz,
+    exportedAt: new Date().toISOString(),
+    user: {name: STATE.user?.name, email: STATE.user?.email},
+    data: data
+  };
+  const blob = new Blob([JSON.stringify(exportObj, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `multibiz-${biz}-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ تم التصدير');
+}
+function importData(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const obj = JSON.parse(e.target.result);
+      if(!obj.data || !obj.business){ showToast('ملف غير صالح', 'error'); return; }
+      if(obj.business !== STATE.business){
+        if(!confirm(`الملف ديال "${BIZ_CONFIGS[obj.business]?.name||obj.business}" ولكن انت ف "${BIZ_CONFIGS[STATE.business].name}". تكمل؟`)) return;
+      }
+      Object.entries(obj.data).forEach(([kind, items]) => {
+        if(Array.isArray(items)) saveItems(kind, items);
+      });
+      showToast('✅ تم الاستيراد');
+      renderPage(STATE.currentPage);
+    } catch(e){ showToast('خطأ ف قراءة الملف: '+e.message, 'error'); }
+  };
+  reader.readAsText(file);
+}
+function clearBusinessData(){
+  if(!confirm('⚠️ غادي نمسح جميع البيانات ديال '+BIZ_CONFIGS[STATE.business].name+'. متيقن؟')) return;
+  if(!confirm('تأكيد أخير — العملية ماتقدرش ترجع!')) return;
+  ['clients','appointments','contracts','services','orders','drivers'].forEach(k => STORE.del('data_'+STATE.business+'_'+k));
+  seedDataIfEmpty();
+  showToast('✅ تم مسح البيانات');
+  renderPage(STATE.currentPage);
+}
+
+/* ============================================================
+   PUBLIC BOOKING SYSTEM
+   ============================================================ */
+
+// Each salon gets a unique public ID (salonId). All salon accounts
+// register themselves in a global directory keyed by salonId.
+// Public booking URL: ?book=<salonId>
+
+function getSalonId(){
+  // Derive from user email (stable across sessions)
+  if(!STATE.user?.email) return null;
+  let id = STORE.get('salonId_'+STATE.user.email);
+  if(!id){
+    id = 'sln_' + Math.random().toString(36).slice(2,10);
+    STORE.set('salonId_'+STATE.user.email, id);
+  }
+  return id;
+}
+
+// Directory maps salonId → public salon info (name, phone, services, schedule)
+function registerSalonInDirectory(){
+  if(STATE.business !== 'salon' || !STATE.user) return;
+  const id = getSalonId();
+  const dir = STORE.get('salon_directory', {});
+  const schedule = STORE.get('salon_schedule_'+STATE.user.email, {
+    days: BIZ_CONFIGS.salon.workingDays,
+    hours: BIZ_CONFIGS.salon.workingHours,
+    slotDuration: BIZ_CONFIGS.salon.slotDuration
+  });
+  dir[id] = {
+    id, ownerEmail: STATE.user.email,
+    name: STATE.user.name, phone: STATE.user.phone,
+    services: loadItems('services'),
+    appointments: loadItems('appointments'),
+    schedule: schedule,
+    updatedAt: Date.now()
+  };
+  STORE.set('salon_directory', dir);
+}
+
+function getSalonFromDirectory(salonId){
+  const dir = STORE.get('salon_directory', {});
+  return dir[salonId] || null;
+}
+
+function getSalonSchedule(){
+  if(!STATE.user?.email) return BIZ_CONFIGS.salon;
+  return STORE.get('salon_schedule_'+STATE.user.email, {
+    days: BIZ_CONFIGS.salon.workingDays,
+    hours: BIZ_CONFIGS.salon.workingHours,
+    slotDuration: BIZ_CONFIGS.salon.slotDuration
+  });
+}
+function saveSalonSchedule(sched){
+  STORE.set('salon_schedule_'+STATE.user.email, sched);
+  registerSalonInDirectory();
+}
+
+function getBookingUrl(){
+  const id = getSalonId();
+  if(!id) return '';
+  const base = location.origin + location.pathname;
+  return base + '?book=' + id;
+}
+
+/* ========== ADMIN: Booking settings page ========== */
+const DAY_NAMES_AR = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const DAY_NAMES_SHORT = ['أحد','اثن','ثلا','أرب','خمي','جمع','سبت'];
+
+function renderBookingAdminPage(){
+  const sched = getSalonSchedule();
+  const url = getBookingUrl();
+  const hours = Array.isArray(sched.hours) ? sched.hours : [sched.hours];
+  const ownerPhone = (STATE.user?.phone||'').replace(/[^0-9+]/g,'').replace(/^\+/,'');
+  const services = loadItems('services');
+  const hasWhatsAppNumber = !!ownerPhone;
+
+  return `
+    <!-- ===== Bot Server Integration ===== -->
+    <div class="bl-card" style="background:linear-gradient(135deg,#7B61FF,#5046E4)">
+      <h3>🤖 Bot تلقائي عبر WhatsApp</h3>
+      <p>بوت حقيقي كيهدر مع الزبون ويحجز تلقائياً بلا تدخل منك — يتطلب نشر سيرفر</p>
+      ${getBotStatus().configured ? `
+        <div style="background:rgba(0,255,0,.15);border:1px solid rgba(0,255,0,.3);border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px">
+          ✅ <strong>Bot خدام</strong> — ${getBotStatus().url}
+        </div>
+        <div class="bl-actions">
+          <button class="bl-btn" onclick="syncBotBookings()">🔄 مزامنة الحجوزات</button>
+          <button class="bl-btn" onclick="openBotConfigModal()">⚙️ إعدادات</button>
+        </div>
+      ` : `
+        <div style="background:rgba(255,255,255,.15);border-radius:8px;padding:12px;margin-bottom:12px;font-size:12px;line-height:1.7">
+          📦 <strong>عندك كود الـ Bot جاهز!</strong><br>
+          1️⃣ ارفع الكود (bot-server.js) ف GitHub<br>
+          2️⃣ انشرو ف <a href="https://render.com" style="color:white;text-decoration:underline" target="_blank">Render.com</a> (مجاناً)<br>
+          3️⃣ اربط Webhook ديال UltraMsg<br>
+          4️⃣ أدخل URL ديال السيرفر هنا 👇
+        </div>
+        <div class="bl-actions">
+          <button class="bl-btn" onclick="openBotConfigModal()">⚙️ إعداد الـ Bot</button>
+          <button class="bl-btn" onclick="showBotSetupGuide()">📖 الدليل الكامل</button>
+        </div>
+      `}
+    </div>
+
+    <!-- ===== Online Booking (Web Page) ===== -->
+    <div class="bl-card">
+      <h3>🌐 حجز أونلاين — صفحة ويب</h3>
+      <p>رابط صفحة حجز كاملة — الزبون يختار ويحجز بنقرات</p>
+      <div class="bl-url" id="booking-url">${esc(url)}</div>
+      <div class="bl-actions">
+        <button class="bl-btn" onclick="copyBookingUrl()">📋 نسخ</button>
+        <button class="bl-btn" onclick="window.open('${url}','_blank')">👁️ معاينة</button>
+        <button class="bl-btn wa" onclick="shareBookingUrlWhatsApp()">📱 شارك</button>
+      </div>
+    </div>
+
+    <!-- ===== WhatsApp Direct Booking ===== -->
+    <div class="bl-card" style="background:linear-gradient(135deg,#25D366,#128C7E)">
+      <h3>💬 حجز مباشر عبر WhatsApp</h3>
+      <p>الزبون ينقر الرابط → WhatsApp يتفتح مع رسالة جاهزة → يبعت ليك</p>
+
+      ${!hasWhatsAppNumber ? `
+        <div style="background:rgba(255,255,255,.2);border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px">
+          ⚠️ <strong>خاصك تحدد رقم الهاتف</strong> ف <a href="#" onclick="showPage('settings');return false" style="color:white;text-decoration:underline">الإعدادات</a> أول شي
+        </div>
+      ` : `
+        <div class="bl-url" id="wa-url">wa.me/${ownerPhone} + رسالة منسقة جاهزة</div>
+        <div style="background:rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:12px;line-height:1.7;max-height:140px;overflow-y:auto">
+          <strong style="font-size:11px;opacity:.8">📨 الرسالة اللي غادي تتكتب للزبون تلقائياً:</strong><br>
+          <pre style="white-space:pre-wrap;font-family:inherit;margin-top:6px;opacity:.95;font-size:11px">${esc(getWhatsAppMessagePreview())}</pre>
+        </div>
+        <div class="bl-actions" style="margin-bottom:14px">
+          <button class="bl-btn" onclick="copyWhatsAppUrl()">📋 نسخ الرابط</button>
+          <button class="bl-btn" onclick="window.open(getWhatsAppBookingUrl(),'_blank')">👁️ جرب</button>
+          <button class="bl-btn" onclick="generateQRCode()">📷 QR Code</button>
+        </div>
+        <div id="qr-container" style="display:none;background:white;padding:20px;border-radius:10px;text-align:center;margin-top:10px">
+          <div id="qrcode" style="display:inline-block"></div>
+          <div style="color:#172B4D;font-size:12px;margin-top:10px">📱 صور الـ QR — الزبون كيمسحو بالكاميرا → WhatsApp كيتفتح</div>
+          <button class="bl-btn" style="margin-top:10px" onclick="downloadQRCode()">⬇️ تحميل صورة</button>
+        </div>
+      `}
+    </div>
+
+    <!-- ===== Pending WhatsApp bookings ===== -->
+    ${hasWhatsAppNumber ? `
+    <div class="card mb-16">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase">📥 حجوزات جاية من WhatsApp</div>
+        <button class="btn btn-primary btn-sm" onclick="openParseBookingModal()">+ تحويل رسالة لموعد</button>
+      </div>
+      <div style="background:var(--accent-light);border-radius:8px;padding:12px;font-size:12px;color:var(--accent);line-height:1.7">
+        💡 <strong>كيفاش تخدم؟</strong><br>
+        1️⃣ الزبون كيبعت ليك رسالة ف WhatsApp (من الرابط ديالك)<br>
+        2️⃣ انسخ الرسالة كاملة<br>
+        3️⃣ نقر "تحويل رسالة لموعد" ← لصق ← التطبيق كيستخرج المعلومات تلقائياً<br>
+        4️⃣ راجع وأكد → الموعد يتسجل
+      </div>
+    </div>
+    ` : ''}
+
+    <!-- ===== Schedule ===== -->
+    <div class="card mb-16">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:14px">📅 أيام العمل</div>
+      <div id="days-chips" style="display:flex;flex-wrap:wrap">
+        ${DAY_NAMES_AR.map((name, i) => `
+          <button class="day-chip ${sched.days.includes(i)?'active':''}" onclick="toggleWorkingDay(${i})">${name}</button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card mb-16">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:14px">⏰ ساعات العمل</div>
+      <div id="hours-container">
+        ${hours.map((h, idx) => `
+          <div class="hours-row" data-idx="${idx}">
+            <label>${idx===0?'الفترة الصباحية:':'الفترة المسائية:'}</label>
+            <input type="time" class="form-input" value="${h.start}" onchange="updateHour(${idx},'start',this.value)">
+            <span>→</span>
+            <input type="time" class="form-input" value="${h.end}" onchange="updateHour(${idx},'end',this.value)">
+            ${hours.length > 1 ? `<button class="btn btn-danger btn-sm btn-icon" onclick="removePeriod(${idx})">×</button>` : ''}
+          </div>
+        `).join('')}
+      </div>
+      ${hours.length < 2 ? '<button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="addPeriod()">+ زيد فترة (مثلا صباح + مساء)</button>' : ''}
+      <div class="divider"></div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">مدة الموعد (بالدقائق)</label>
+        <select class="form-input" onchange="updateSlotDuration(this.value)" style="max-width:200px">
+          <option value="15" ${sched.slotDuration==15?'selected':''}>15 دقيقة</option>
+          <option value="20" ${sched.slotDuration==20?'selected':''}>20 دقيقة</option>
+          <option value="30" ${sched.slotDuration==30?'selected':''}>30 دقيقة</option>
+          <option value="45" ${sched.slotDuration==45?'selected':''}>45 دقيقة</option>
+          <option value="60" ${sched.slotDuration==60?'selected':''}>60 دقيقة (ساعة)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:12px">💡 كيفاش تخدم؟</div>
+      <ol style="padding-right:20px;line-height:2;font-size:13px;color:var(--text2)">
+        <li>زيد الخدمات ديالك ف <a href="#" onclick="showPage('services');return false" style="color:var(--primary)">صفحة الخدمات</a></li>
+        <li>حدد أيام وساعات العمل هنا</li>
+        <li>شارك الروابط (WhatsApp أو صفحة أونلاين) مع الزبناء</li>
+        <li>الحجوزات كتوصلك → كتظهر ف <a href="#" onclick="showPage('appointments');return false" style="color:var(--primary)">المواعيد</a></li>
+      </ol>
+    </div>
+  `;
+}
+
+/* ========== BOT SERVER INTEGRATION ========== */
+function getBotStatus(){
+  return STORE.get('bot_config_'+(STATE.user?.email||''), { configured:false, url:'', secret:'' });
+}
+function saveBotConfig(cfg){
+  STORE.set('bot_config_'+STATE.user.email, cfg);
+}
+
+function openBotConfigModal(){
+  const cfg = getBotStatus();
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">⚙️ إعدادات Bot Server</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:var(--accent-light);border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--accent);line-height:1.7">
+          💡 هاد الإعدادات يتخاصو فقط إذا نشرتي الـ bot على Render/Railway
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bot Server URL *</label>
+          <input type="url" id="bot-url" class="form-input" dir="ltr" value="${esc(cfg.url||'')}" placeholder="https://multibiz-bot.onrender.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Webhook Secret *</label>
+          <input type="password" id="bot-secret" class="form-input" dir="ltr" value="${esc(cfg.secret||'')}" placeholder="السر اللي حطيتو ف Render">
+        </div>
+        <div class="form-group">
+          <button class="btn btn-secondary btn-sm" onclick="testBotConnection()">🧪 اختبار الاتصال</button>
+          <span id="bot-test-result"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-danger btn-sm" onclick="disconnectBot()">قطع الاتصال</button>
+        <button class="btn btn-primary" onclick="saveBotConnection()">💾 حفظ</button>
+      </div>
+    </div>`);
+}
+
+async function testBotConnection(){
+  const url = document.getElementById('bot-url').value.trim().replace(/\/$/,'');
+  const secret = document.getElementById('bot-secret').value.trim();
+  const result = document.getElementById('bot-test-result');
+  if(!url || !secret){ result.innerHTML = '<span style="color:var(--danger);font-size:12px">⚠️ عَمّر الحقول</span>'; return; }
+  result.innerHTML = '<span style="color:var(--text2);font-size:12px">⏳ اختبار...</span>';
+  try {
+    const r = await fetch(url + '/api/bookings', { headers: {'x-api-secret': secret} });
+    if(r.ok){
+      const data = await r.json();
+      result.innerHTML = `<span style="color:var(--primary);font-size:12px">✅ متصل — ${data.length} حجز</span>`;
+    } else {
+      result.innerHTML = `<span style="color:var(--danger);font-size:12px">❌ خطأ ${r.status}</span>`;
+    }
+  } catch(e) {
+    result.innerHTML = `<span style="color:var(--danger);font-size:12px">❌ ${esc(e.message)}</span>`;
+  }
+}
+
+function saveBotConnection(){
+  const url = document.getElementById('bot-url').value.trim().replace(/\/$/,'');
+  const secret = document.getElementById('bot-secret').value.trim();
+  if(!url || !secret){ showToast('عَمّر الحقول', 'error'); return; }
+  saveBotConfig({ configured:true, url, secret });
+  closeModal();
+  showToast('✅ تم الحفظ');
+  renderPage('booking');
+}
+
+function disconnectBot(){
+  if(!confirm('متيقن بغيتي تقطع الاتصال مع الـ bot؟')) return;
+  saveBotConfig({ configured:false, url:'', secret:'' });
+  closeModal();
+  showToast('✓ تم القطع');
+  renderPage('booking');
+}
+
+async function syncBotBookings(){
+  const cfg = getBotStatus();
+  if(!cfg.configured){ showToast('الـ bot غير مضبوط', 'error'); return; }
+  showToast('⏳ جلب الحجوزات...', 'info');
+  try {
+    const r = await fetch(cfg.url + '/api/bookings', { headers: {'x-api-secret': cfg.secret} });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const botBookings = await r.json();
+    let added = 0;
+    const existing = loadItems('appointments');
+    botBookings.forEach(b => {
+      if(b.status === 'cancelled') return;
+      // Check if already imported (by bot id)
+      if(existing.find(a => a.botId === b.id)) return;
+      const datetime = new Date(b.date + 'T' + b.time + ':00').getTime();
+      addItem('appointments', {
+        clientName: b.name,
+        clientPhone: '+'+b.phone,
+        service: b.service,
+        price: b.price,
+        datetime: datetime,
+        status: 'confirmed',
+        notes: '🤖 حجز عبر Bot WhatsApp',
+        botBooking: true,
+        botId: b.id
+      });
+      // Add client if not exists
+      const phone = '+'+b.phone;
+      if(!loadItems('clients').find(c => c.phone === phone)){
+        addItem('clients', { name:b.name, phone:phone });
+      }
+      added++;
+    });
+    registerSalonInDirectory();
+    showToast(`✅ تم استيراد ${added} حجز جديد`);
+    renderPage('booking');
+  } catch(e) {
+    showToast('❌ خطأ: '+e.message, 'error');
+  }
+}
+
+function showBotSetupGuide(){
+  openModal(`
+    <div class="modal" style="max-width:620px">
+      <div class="modal-header">
+        <span class="modal-title">📖 دليل نشر الـ Bot</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body" style="line-height:1.8;font-size:13px">
+        <div style="background:var(--primary-light);border-radius:8px;padding:12px;margin-bottom:14px;color:var(--primary-dark)">
+          🎯 <strong>الهدف:</strong> نشر البوت على سيرفر مجاني باش يخدم 24/7
+        </div>
+
+        <h4 style="font-size:14px;margin-bottom:8px;color:var(--primary)">📦 الملفات اللي خاصك</h4>
+        <ul style="padding-right:20px;margin-bottom:14px">
+          <li><code>bot-server.js</code> — كود البوت</li>
+          <li><code>package.json</code> — dependencies</li>
+          <li><code>.env.example</code> — مثال الإعدادات</li>
+          <li><code>README.md</code> — الدليل الكامل</li>
+        </ul>
+
+        <h4 style="font-size:14px;margin-bottom:8px;color:var(--primary)">🚀 الخطوات (15 دقيقة)</h4>
+        <ol style="padding-right:20px;margin-bottom:14px">
+          <li><strong>GitHub:</strong> أنشئ repository وارفع الملفات</li>
+          <li><strong>UltraMsg:</strong> اشترك ب 10$/شهر، احصل على Instance + Token</li>
+          <li><strong>Render.com:</strong>
+            <ul style="padding-right:20px">
+              <li>سجل بـ GitHub</li>
+              <li>New → Web Service → اختار الـ repo</li>
+              <li>Build: <code>npm install</code></li>
+              <li>Start: <code>npm start</code></li>
+              <li>زيد Environment Variables (UltraMsg credentials + secret)</li>
+            </ul>
+          </li>
+          <li><strong>UltraMsg Webhook:</strong> ضع URL ديال Render + <code>/webhook</code></li>
+          <li><strong>اختبر:</strong> بعت "السلام" للصالون من أي WhatsApp</li>
+        </ol>
+
+        <div style="background:var(--warning-light);border-radius:8px;padding:12px;color:var(--warning);font-size:12px">
+          💰 <strong>التكلفة الشهرية:</strong><br>
+          • Render Free: 0$ (محدود)<br>
+          • UltraMsg: 10$/شهر<br>
+          • <strong>المجموع: ~10$/شهر</strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal()">فهمت ✓</button>
+      </div>
+    </div>
+  `);
+}
+
+
+  const services = loadItems('services');
+  const servicesList = services.length
+    ? services.map((s,i)=>`${i+1}. ${s.name} — ${s.price} درهم`).join('\n')
+    : '';
+  return `السلام عليكم ${STATE.user?.name||''} 👋
+
+بغيت نحجز موعد:
+
+👤 الاسم: 
+📞 الهاتف: 
+📅 التاريخ: (مثلا: 2026/04/20)
+🕐 الساعة: (مثلا: 15:30)
+✂️ الخدمة:${servicesList?'\n'+servicesList+'\n(اختار رقم)':''}
+
+شكرا 🙏`;
+}
+
+function getWhatsAppBookingUrl(){
+  const phone = (STATE.user?.phone||'').replace(/[^0-9+]/g,'').replace(/^\+/,'');
+  if(!phone) return '';
+  const services = loadItems('services');
+  const servicesList = services.length
+    ? services.map((s,i)=>`${i+1}. ${s.name} — ${s.price} درهم`).join('\n')
+    : '';
+  const msg = `السلام عليكم ${STATE.user?.name||''} 👋
+
+بغيت نحجز موعد:
+
+👤 *الاسم:* 
+📞 *الهاتف:* 
+📅 *التاريخ:* (مثلا: 2026/04/20)
+🕐 *الساعة:* (مثلا: 15:30)
+✂️ *الخدمة:* ${servicesList?'\n'+servicesList+'\n(اختار رقم)':''}
+
+شكرا 🙏`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+}
+
+function copyWhatsAppUrl(){
+  const url = getWhatsAppBookingUrl();
+  if(!url){ showToast('حدد رقم الهاتف أولاً', 'error'); return; }
+  navigator.clipboard.writeText(url).then(()=>showToast('✅ تم النسخ')).catch(()=>{
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('✅ تم النسخ');
+  });
+}
+
+function generateQRCode(){
+  const container = document.getElementById('qr-container');
+  const qrdiv = document.getElementById('qrcode');
+  if(!container || !qrdiv) return;
+  if(container.style.display === 'block'){
+    container.style.display = 'none';
+    return;
+  }
+  qrdiv.innerHTML = '';
+  const url = getWhatsAppBookingUrl();
+  if(typeof QRCode === 'undefined'){
+    showToast('QR Code library ماتحملتش', 'error');
+    return;
+  }
+  new QRCode(qrdiv, {
+    text: url,
+    width: 200, height: 200,
+    colorDark: '#172B4D',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+  container.style.display = 'block';
+}
+
+function downloadQRCode(){
+  const img = document.querySelector('#qrcode img') || document.querySelector('#qrcode canvas');
+  if(!img){ showToast('انتج QR أولاً', 'error'); return; }
+  let dataUrl;
+  if(img.tagName === 'CANVAS') dataUrl = img.toDataURL('image/png');
+  else dataUrl = img.src;
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = 'whatsapp-booking-qr.png';
+  a.click();
+  showToast('✅ تم التحميل');
+}
+
+/* ========== Parse WhatsApp message into appointment ========== */
+function openParseBookingModal(){
+  openModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">📥 تحويل رسالة WhatsApp لموعد</span>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">الصق رسالة الزبون هنا</label>
+          <textarea id="parse-msg" class="form-input" rows="10" placeholder="الصق الرسالة من WhatsApp..." style="font-family:monospace;font-size:12px" oninput="parseBookingMessage()"></textarea>
+        </div>
+        <div id="parse-result"></div>
+      </div>
+    </div>`);
+}
+
+function parseBookingMessage(){
+  const text = document.getElementById('parse-msg').value;
+  if(!text || text.length < 10){
+    document.getElementById('parse-result').innerHTML = '';
+    return;
+  }
+  const parsed = extractBookingFields(text);
+  const services = loadItems('services');
+  document.getElementById('parse-result').innerHTML = `
+    <div style="background:var(--primary-light);border-radius:8px;padding:14px;margin-top:6px;font-size:13px;color:var(--primary-dark);line-height:2;margin-bottom:14px">
+      <strong>📋 المعلومات المستخرجة:</strong>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group"><label class="form-label">الاسم *</label><input type="text" id="pb-name-fld" class="form-input" value="${esc(parsed.name||'')}"></div>
+      <div class="form-group"><label class="form-label">الهاتف *</label><input type="tel" id="pb-phone-fld" class="form-input" dir="ltr" value="${esc(parsed.phone||'')}"></div>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group"><label class="form-label">التاريخ</label><input type="date" id="pb-date-fld" class="form-input" value="${parsed.date||''}"></div>
+      <div class="form-group"><label class="form-label">الساعة</label><input type="time" id="pb-time-fld" class="form-input" value="${parsed.time||''}"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">الخدمة</label>
+      <select id="pb-service-fld" class="form-input" onchange="document.getElementById('pb-price-fld').value=this.options[this.selectedIndex].dataset.price||''">
+        <option value="">—</option>
+        ${services.map(s=>`<option value="${esc(s.name)}" data-price="${s.price}" ${parsed.service===s.name||(parsed.serviceIndex && services.indexOf(s)+1==parsed.serviceIndex)?'selected':''}>${esc(s.name)} — ${fmtMoney(s.price)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">السعر (درهم)</label>
+      <input type="number" id="pb-price-fld" class="form-input" value="${parsed.price||''}">
+    </div>
+    <div class="modal-footer" style="margin:-20px;margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveBookingFromParse()">✓ تأكيد وإضافة الموعد</button>
+    </div>
+  `;
+}
+
+function extractBookingFields(text){
+  const result = {};
+  // Phone: look for Moroccan format or any 9+ digits
+  const phoneMatch = text.match(/(?:\+?212|0)[\s-]?(\d[\s-]?){9,}/);
+  if(phoneMatch) result.phone = phoneMatch[0].replace(/[\s-]/g,'');
+  else {
+    const digits = text.match(/\d{9,}/);
+    if(digits) result.phone = digits[0];
+  }
+
+  // Name: look after "الاسم:" or "Nom:"
+  const nameMatch = text.match(/(?:الاسم|اسم|Nom|Name)[:\s]*\*?\s*([^\n*📞📅🕐✂️0-9]+)/i);
+  if(nameMatch && nameMatch[1].trim()) result.name = nameMatch[1].trim().replace(/[^\w\s\u0600-\u06FF]/g,'').trim();
+
+  // Date: look for YYYY/MM/DD, DD/MM/YYYY, or DD-MM-YYYY
+  const dateMatch1 = text.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+  const dateMatch2 = text.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if(dateMatch1){
+    const [,y,m,d] = dateMatch1;
+    result.date = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  } else if(dateMatch2){
+    const [,d,m,y] = dateMatch2;
+    result.date = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  }
+
+  // Time: HH:MM
+  const timeMatch = text.match(/(\d{1,2})[:h](\d{2})/);
+  if(timeMatch){
+    result.time = `${String(timeMatch[1]).padStart(2,'0')}:${timeMatch[2]}`;
+  }
+
+  // Service: priority - (1) numeric choice like "(اختار رقم): 2", (2) exact service name in text
+  const services = loadItems('services');
+  // First check for numeric choice pattern
+  const numChoiceMatch = text.match(/(?:اختار|اختر|choisir|choose|رقم)[^\d]{0,20}(\d+)/i);
+  if(numChoiceMatch){
+    const idx = Number(numChoiceMatch[1]);
+    if(idx >= 1 && idx <= services.length){
+      result.serviceIndex = idx;
+      result.service = services[idx-1].name;
+      result.price = services[idx-1].price;
+    }
+  }
+  // Also try explicit "الخدمة: 3"
+  if(!result.service){
+    const serviceNumMatch = text.match(/(?:الخدمة|خدمة|Service)[:\s]*\*?\s*(\d+)(?!\d)/i);
+    if(serviceNumMatch){
+      const idx = Number(serviceNumMatch[1]);
+      if(idx >= 1 && idx <= services.length){
+        result.serviceIndex = idx;
+        result.service = services[idx-1].name;
+        result.price = services[idx-1].price;
+      }
+    }
+  }
+  // Fallback: longest matching service name
+  if(!result.service){
+    const matches = services.filter(s => text.includes(s.name));
+    if(matches.length){
+      // Prefer longest name (most specific)
+      matches.sort((a,b) => b.name.length - a.name.length);
+      result.service = matches[0].name;
+      result.price = matches[0].price;
+    }
+  }
+
+  return result;
+}
+
+function saveBookingFromParse(){
+  const name = document.getElementById('pb-name-fld').value.trim();
+  const phone = document.getElementById('pb-phone-fld').value.trim();
+  const date = document.getElementById('pb-date-fld').value;
+  const time = document.getElementById('pb-time-fld').value;
+  const service = document.getElementById('pb-service-fld').value;
+  const price = Number(document.getElementById('pb-price-fld').value) || 0;
+  if(!name || !phone){ showToast('الاسم والهاتف مطلوبين', 'error'); return; }
+  let datetime = null;
+  if(date && time) datetime = new Date(date + 'T' + time + ':00').getTime();
+  else if(date) datetime = new Date(date + 'T12:00:00').getTime();
+  addItem('appointments', {
+    clientName: name, clientPhone: phone,
+    service: service || 'غير محدد',
+    price: price, datetime: datetime,
+    status: 'pending',
+    notes: '📱 حجز عبر WhatsApp',
+    whatsappBooking: true
+  });
+  // Add client if not exists
+  const existing = loadItems('clients').find(c => c.phone === phone);
+  if(!existing) addItem('clients', {name, phone});
+  registerSalonInDirectory();
+  closeModal();
+  showToast('✅ تم إضافة الموعد');
+  showPage('appointments');
+}
+
+function toggleWorkingDay(dayIdx){
+  const sched = getSalonSchedule();
+  const idx = sched.days.indexOf(dayIdx);
+  if(idx > -1) sched.days.splice(idx, 1);
+  else sched.days.push(dayIdx);
+  sched.days.sort();
+  saveSalonSchedule(sched);
+  renderPage('booking');
+}
+function updateHour(idx, field, value){
+  const sched = getSalonSchedule();
+  if(!Array.isArray(sched.hours)) sched.hours = [sched.hours];
+  sched.hours[idx][field] = value;
+  saveSalonSchedule(sched);
+}
+function addPeriod(){
+  const sched = getSalonSchedule();
+  if(!Array.isArray(sched.hours)) sched.hours = [sched.hours];
+  sched.hours.push({start:'15:00', end:'22:00'});
+  saveSalonSchedule(sched);
+  renderPage('booking');
+}
+function removePeriod(idx){
+  const sched = getSalonSchedule();
+  if(!Array.isArray(sched.hours)) sched.hours = [sched.hours];
+  sched.hours.splice(idx, 1);
+  saveSalonSchedule(sched);
+  renderPage('booking');
+}
+function updateSlotDuration(v){
+  const sched = getSalonSchedule();
+  sched.slotDuration = Number(v);
+  saveSalonSchedule(sched);
+}
+
+function copyBookingUrl(){
+  const url = getBookingUrl();
+  navigator.clipboard.writeText(url).then(()=>{
+    showToast('✅ تم نسخ الرابط');
+  }).catch(()=>{
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✅ تم نسخ الرابط');
+  });
+}
+function shareBookingUrlWhatsApp(){
+  const url = getBookingUrl();
+  const msg = `🌟 *${STATE.user?.name||'صالوننا'}*\n\nحجز موعدك دابا بسهولة عبر الرابط التالي:\n\n${url}\n\nاختار الخدمة والوقت اللي يناسبك ✂️`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg), '_blank');
+}
+
+/* ========== PUBLIC: Client booking page ========== */
+let pbState = {
+  salon: null,
+  step: 1,
+  selectedService: null,
+  selectedDate: null,   // YYYY-MM-DD
+  selectedTime: null,   // HH:MM
+  clientName: '',
+  clientPhone: ''
+};
+
+function openPublicBookingPage(salonId){
+  const salon = getSalonFromDirectory(salonId);
+  const container = document.getElementById('public-booking');
+  if(!salon){
+    container.innerHTML = `
+      <div class="pb-box">
+        <div class="pb-step" style="text-align:center;padding:60px 20px">
+          <div style="font-size:64px;margin-bottom:14px">😕</div>
+          <h2 style="font-size:20px;font-weight:800;margin-bottom:8px">الرابط غير صالح</h2>
+          <p style="color:var(--text2);font-size:13px">تأكد من الرابط أو اتصل بالصالون مباشرة</p>
+        </div>
+      </div>`;
+    document.getElementById('splash').classList.add('hidden');
+    container.classList.remove('hidden');
+    return;
+  }
+  pbState.salon = salon;
+  pbState.step = 1;
+  pbState.selectedService = null;
+  pbState.selectedDate = null;
+  pbState.selectedTime = null;
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('onboarding').classList.add('hidden');
+  document.getElementById('login-page').classList.add('hidden');
+  document.getElementById('app').classList.add('hidden');
+  container.classList.remove('hidden');
+  renderPublicBooking();
+}
+
+function renderPublicBooking(){
+  const salon = pbState.salon;
+  const services = salon.services || [];
+  if(services.length === 0){
+    document.getElementById('public-booking').innerHTML = `
+      <div class="pb-box">
+        <div class="pb-header">
+          <div class="ico">💇</div>
+          <h1>${esc(salon.name)}</h1>
+        </div>
+        <div class="pb-step" style="text-align:center;padding:40px 20px">
+          <div style="font-size:48px;margin-bottom:12px">⏳</div>
+          <p>الصالون ماعندوش خدمات مضافة لساع. اتصل مباشرة للحجز.</p>
+          ${salon.phone?`<a href="tel:${esc(salon.phone)}" class="btn btn-primary" style="margin-top:14px">📞 ${esc(salon.phone)}</a>`:''}
+        </div>
+      </div>`;
+    return;
+  }
+
+  const nextDays = getAvailableDays(salon.schedule);
+
+  let stepHtml = '';
+  // Step 1: Service
+  stepHtml += `
+    <div class="pb-step">
+      <div class="pb-step-title"><span class="pb-step-num">1</span> اختار الخدمة</div>
+      <div class="pb-options">
+        ${services.map(s => `
+          <button class="pb-opt ${pbState.selectedService?.name===s.name?'selected':''}" onclick="pbSelectService('${esc(s.name)}', ${s.price||0}, ${s.duration||30})">
+            <span class="big">${esc(s.name)}</span>
+            <span class="small">${fmtMoney(s.price||0)} • ${s.duration||30} د</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>`;
+
+  // Step 2: Day
+  if(pbState.selectedService){
+    stepHtml += `
+      <div class="pb-step">
+        <div class="pb-step-title"><span class="pb-step-num">2</span> اختار اليوم</div>
+        <div class="pb-days">
+          ${nextDays.map(d => `
+            <button class="pb-day ${pbState.selectedDate===d.iso?'selected':''}" ${d.available?'':'disabled'} onclick="pbSelectDate('${d.iso}')">
+              <div class="dname">${DAY_NAMES_SHORT[d.dow]}</div>
+              <div class="dnum">${d.day}</div>
+            </button>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+
+  // Step 3: Time
+  if(pbState.selectedService && pbState.selectedDate){
+    const slots = getAvailableSlots(salon, pbState.selectedDate);
+    stepHtml += `
+      <div class="pb-step">
+        <div class="pb-step-title"><span class="pb-step-num">3</span> اختار الساعة</div>
+        ${slots.morning.length ? `
+          <div class="pb-period-label">🌅 صباحاً</div>
+          <div class="pb-slots">
+            ${slots.morning.map(s => `
+              <button class="pb-slot ${pbState.selectedTime===s.time?'selected':''}" ${s.available?'':'disabled'} onclick="pbSelectTime('${s.time}')">${s.time}</button>
+            `).join('')}
+          </div>` : ''}
+        ${slots.afternoon.length ? `
+          <div class="pb-period-label">🌆 مساءً</div>
+          <div class="pb-slots">
+            ${slots.afternoon.map(s => `
+              <button class="pb-slot ${pbState.selectedTime===s.time?'selected':''}" ${s.available?'':'disabled'} onclick="pbSelectTime('${s.time}')">${s.time}</button>
+            `).join('')}
+          </div>` : ''}
+        ${!slots.morning.length && !slots.afternoon.length ? '<div class="empty-state" style="padding:20px">😔 ما كاين حتى وقت متاح فهاد النهار</div>' : ''}
+      </div>`;
+  }
+
+  // Step 4: Contact info
+  if(pbState.selectedService && pbState.selectedDate && pbState.selectedTime){
+    stepHtml += `
+      <div class="pb-step">
+        <div class="pb-step-title"><span class="pb-step-num">4</span> معلوماتك</div>
+        <div class="form-group">
+          <label class="form-label">اسمك *</label>
+          <input type="text" id="pb-name" class="form-input" value="${esc(pbState.clientName)}" placeholder="محمد العلمي">
+        </div>
+        <div class="form-group">
+          <label class="form-label">رقم الهاتف *</label>
+          <input type="tel" id="pb-phone" class="form-input" dir="ltr" value="${esc(pbState.clientPhone)}" placeholder="+212661234567">
+        </div>
+        <div class="pb-summary">
+          <strong>📋 ملخص الحجز:</strong><br>
+          ✂️ الخدمة: ${esc(pbState.selectedService.name)} — ${fmtMoney(pbState.selectedService.price)}<br>
+          📅 التاريخ: ${formatArabicDate(pbState.selectedDate)}<br>
+          🕐 الوقت: ${pbState.selectedTime}
+        </div>
+        <button class="btn btn-primary" onclick="pbConfirmBooking()" style="width:100%;justify-content:center;padding:14px;margin-top:14px;font-size:14px">✓ أكد الحجز</button>
+      </div>`;
+  }
+
+  document.getElementById('public-booking').innerHTML = `
+    <div class="pb-box">
+      <div class="pb-header">
+        <div class="ico">💇</div>
+        <h1>${esc(salon.name)}</h1>
+        <p>حجز موعد — اختار الخدمة والوقت</p>
+      </div>
+      ${stepHtml}
+      <p style="text-align:center;color:var(--text3);font-size:11px;margin-top:20px">مدعوم من <strong style="color:var(--primary)">MultiBiz</strong> 🇲🇦</p>
+    </div>`;
+}
+
+function pbSelectService(name, price, duration){
+  pbState.selectedService = {name, price, duration};
+  pbState.selectedDate = null; pbState.selectedTime = null;
+  renderPublicBooking();
+}
+function pbSelectDate(iso){
+  pbState.selectedDate = iso;
+  pbState.selectedTime = null;
+  renderPublicBooking();
+}
+function pbSelectTime(time){
+  // Persist current name/phone fields before re-render
+  const nameEl = document.getElementById('pb-name');
+  const phoneEl = document.getElementById('pb-phone');
+  if(nameEl) pbState.clientName = nameEl.value;
+  if(phoneEl) pbState.clientPhone = phoneEl.value;
+  pbState.selectedTime = time;
+  renderPublicBooking();
+}
+
+function getAvailableDays(schedule){
+  // Show next 14 days; mark unavailable if not a working day
+  const days = [];
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const workingDays = schedule?.days || [0,1,2,3,4,5,6];
+  for(let i = 0; i < 14; i++){
+    const d = new Date(now.getTime() + i*86400000);
+    const dow = d.getDay();
+    const iso = d.toISOString().slice(0,10);
+    days.push({
+      iso, day: d.getDate(), dow,
+      available: workingDays.includes(dow)
+    });
+  }
+  return days;
+}
+
+function getAvailableSlots(salon, dateISO){
+  const schedule = salon.schedule || {};
+  const slotMin = schedule.slotDuration || 30;
+  const serviceDur = pbState.selectedService?.duration || slotMin;
+  // Existing appointments on that date
+  const existing = (salon.appointments || []).filter(a => {
+    if(!a.datetime) return false;
+    const d = new Date(a.datetime);
+    return d.toISOString().slice(0,10) === dateISO && ['pending','confirmed'].includes(a.status);
+  });
+  const bookedTimes = existing.map(a => {
+    const d = new Date(a.datetime);
+    return d.getHours()*60 + d.getMinutes();
+  });
+
+  const hoursArr = Array.isArray(schedule.hours) ? schedule.hours : [schedule.hours || {start:'09:00', end:'22:00'}];
+  const now = new Date();
+  const isToday = dateISO === now.toISOString().slice(0,10);
+  const nowMin = now.getHours()*60 + now.getMinutes();
+
+  const result = { morning: [], afternoon: [] };
+  hoursArr.forEach((h, idx) => {
+    const [sh, sm] = h.start.split(':').map(Number);
+    const [eh, em] = h.end.split(':').map(Number);
+    const startMin = sh*60 + sm;
+    const endMin = eh*60 + em;
+    for(let t = startMin; t + serviceDur <= endMin; t += slotMin){
+      const time = String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0');
+      // Check conflict with existing bookings
+      let conflict = false;
+      for(const bt of bookedTimes){
+        if(Math.abs(bt - t) < serviceDur) { conflict = true; break; }
+      }
+      // Can't book in the past (today)
+      const inPast = isToday && t <= nowMin + 15; // 15min buffer
+      const slot = { time, available: !conflict && !inPast };
+      // If there are 2 periods, idx 0 = morning, idx 1 = afternoon
+      // If only 1 period, split at 13:00
+      if(hoursArr.length > 1){
+        (idx === 0 ? result.morning : result.afternoon).push(slot);
+      } else {
+        (t < 13*60 ? result.morning : result.afternoon).push(slot);
+      }
+    }
+  });
+  return result;
+}
+
+function formatArabicDate(iso){
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('ar-MA', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+}
+
+function pbConfirmBooking(){
+  const nameEl = document.getElementById('pb-name');
+  const phoneEl = document.getElementById('pb-phone');
+  const name = nameEl.value.trim();
+  const phone = phoneEl.value.trim();
+  if(!name || !phone){ showToast('الاسم ورقم الهاتف مطلوبين', 'error'); return; }
+  if(phone.replace(/[^0-9]/g,'').length < 9){ showToast('رقم هاتف غير صحيح', 'error'); return; }
+
+  const salon = pbState.salon;
+  const datetime = new Date(pbState.selectedDate + 'T' + pbState.selectedTime + ':00').getTime();
+
+  // Build appointment
+  const newAppt = {
+    id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    clientName: name,
+    clientPhone: phone,
+    service: pbState.selectedService.name,
+    price: pbState.selectedService.price,
+    datetime: datetime,
+    status: 'pending',
+    notes: '🌐 حجز عبر الرابط العمومي',
+    onlineBooking: true,
+    createdAt: Date.now()
+  };
+
+  // Write into salon owner's localStorage data
+  const key = 'mb_data_salon_appointments';
+  // We need to use the owner's email. Since everyone shares the same localStorage
+  // on this device, we store by the fixed key. In real multi-device this would be
+  // handled by a backend.
+  const ownerAppts = JSON.parse(localStorage.getItem(key) || '[]');
+  ownerAppts.unshift(newAppt);
+  localStorage.setItem(key, JSON.stringify(ownerAppts));
+
+  // Also add client
+  const clientsKey = 'mb_data_salon_clients';
+  const clients = JSON.parse(localStorage.getItem(clientsKey) || '[]');
+  if(!clients.find(c => c.phone === phone)){
+    clients.unshift({
+      id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      name, phone, createdAt: Date.now()
+    });
+    localStorage.setItem(clientsKey, JSON.stringify(clients));
+  }
+
+  // Update directory so next viewers see the new booking
+  const dir = STORE.get('salon_directory', {});
+  if(dir[salon.id]){
+    dir[salon.id].appointments = ownerAppts;
+    STORE.set('salon_directory', dir);
+  }
+
+  // Show success
+  document.getElementById('public-booking').innerHTML = `
+    <div class="pb-box">
+      <div class="pb-header">
+        <div class="ico">💇</div>
+        <h1>${esc(salon.name)}</h1>
+      </div>
+      <div class="pb-step pb-success">
+        <div class="ico">✅</div>
+        <h2>تم الحجز بنجاح!</h2>
+        <p>غادي يتواصل معاك الصالون للتأكيد</p>
+        <div class="pb-summary" style="text-align:right;margin-top:14px">
+          <strong>تفاصيل موعدك:</strong><br>
+          👤 ${esc(name)}<br>
+          ✂️ ${esc(pbState.selectedService.name)} — ${fmtMoney(pbState.selectedService.price)}<br>
+          📅 ${formatArabicDate(pbState.selectedDate)}<br>
+          🕐 ${pbState.selectedTime}
+        </div>
+        ${salon.phone ? `<a href="tel:${esc(salon.phone)}" class="btn btn-secondary" style="margin-top:14px">📞 ${esc(salon.phone)}</a>` : ''}
+      </div>
+      <p style="text-align:center;color:var(--text3);font-size:11px;margin-top:16px">مدعوم من <strong style="color:var(--primary)">MultiBiz</strong> 🇲🇦</p>
+    </div>`;
+}
+
+/* ============================================================
+   STARTUP
+   ============================================================ */
+window.addEventListener('load', () => {
+  loadTheme();
+  // Check if this is a public booking URL
+  const params = new URLSearchParams(location.search);
+  const bookSalonId = params.get('book');
+  if(bookSalonId){
+    setTimeout(() => openPublicBookingPage(bookSalonId), 800);
+    return;
+  }
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hidden');
+    const session = STORE.get('session');
+    const biz = STORE.get('business');
+    if(session && biz){
+      STATE.user = session;
+      STATE.business = biz;
+      loadWhatsAppSettings();
+      enterApp();
+      if(biz === 'salon') registerSalonInDirectory();
+    } else if(biz){
+      STATE.business = biz;
+      const cfg = BIZ_CONFIGS[biz];
+      document.getElementById('login-ico').textContent = cfg.icon;
+      document.getElementById('login-sub').textContent = cfg.name + ' — ' + cfg.tagline;
+      document.getElementById('login-page').classList.remove('hidden');
+    } else {
+      document.getElementById('onboarding').classList.remove('hidden');
+    }
+  }, 1200);
+});
+
+// Enter key for auth
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){ closeModal(); closeSidebar(); }
+  if(e.key === 'Enter' && !document.getElementById('login-page').classList.contains('hidden')) doAuth();
+});
+</script>
+
+</body>
+</html>
